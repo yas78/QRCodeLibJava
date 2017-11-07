@@ -138,11 +138,10 @@ public class Form1 extends JFrame {
         };
     }
 
-    private ActionListener comboBox_action() {
+    private ActionListener action() {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("sss");
                 updateQRCodePanel();
             }
         };
@@ -206,10 +205,11 @@ public class Form1 extends JFrame {
             this.cmbErrorCorrectionLevel.addItem(ecLevel);
         }
         this.cmbErrorCorrectionLevel.setSelectedItem(ErrorCorrectionLevel.M);
-        this.cmbErrorCorrectionLevel.addActionListener(comboBox_action());
+        this.cmbErrorCorrectionLevel.addActionListener(action());
 
         // chkStructuredAppend
         this.chkStructuredAppend = new JCheckBox("Structured Append");
+        this.chkStructuredAppend.addActionListener(action());
         this.chkStructuredAppend.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
 
         // lblData
@@ -235,7 +235,7 @@ public class Form1 extends JFrame {
             this.cmbMaxVersion.addItem(i);
         }
         this.cmbMaxVersion.setSelectedIndex(this.cmbMaxVersion.getItemCount() - 1);
-        this.cmbMaxVersion.addActionListener(comboBox_action());
+        this.cmbMaxVersion.addActionListener(action());
 
         // numSpinner
         SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(5, 1, 100, 1);
@@ -257,89 +257,107 @@ public class Form1 extends JFrame {
             this.cmbCharset.addItem(charset);
         }
         this.cmbCharset.setSelectedItem(Charset.defaultCharset());
-        this.cmbCharset.addActionListener(comboBox_action());
+        this.cmbCharset.addActionListener(action());
 
         // btnSave
         this.btnSave = new JButton("Save");
         this.btnSave.addActionListener(btnSave_actionPerformed());
 
         GroupLayout groupLayout = new GroupLayout(getContentPane());
-        groupLayout.setHorizontalGroup(
-            groupLayout.createParallelGroup(Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addGap(9)
-                            .addComponent(this.lblData, GroupLayout.PREFERRED_SIZE, 50, GroupLayout.PREFERRED_SIZE))
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(groupLayout.createSequentialGroup()
-                                    .addGap(9)
-                                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                        .addGroup(groupLayout.createSequentialGroup()
-                                            .addComponent(this.lblMaxVersion, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(72)
-                                            .addComponent(this.cmbMaxVersion, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(groupLayout.createSequentialGroup()
-                                            .addComponent(this.lblErrorCorrectionLevel, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(12)
-                                            .addComponent(this.cmbErrorCorrectionLevel, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)))
-                                    .addGap(25)
-                                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                        .addGroup(groupLayout.createSequentialGroup()
-                                            .addComponent(this.chkStructuredAppend, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(25)
-                                            .addComponent(this.lblModuleSize, GroupLayout.PREFERRED_SIZE, 83, GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(ComponentPlacement.RELATED)
-                                            .addComponent(this.numSpinner, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(37)
-                                            .addComponent(this.btnSave, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)
-                                            .addGap(0, 0, Short.MAX_VALUE))
-                                        .addGroup(groupLayout.createSequentialGroup()
-                                            .addComponent(this.lblCharset)
-                                            .addPreferredGap(ComponentPlacement.UNRELATED)
-                                            .addComponent(this.cmbCharset, GroupLayout.PREFERRED_SIZE, 303, GroupLayout.PREFERRED_SIZE))))
-                                .addGroup(groupLayout.createSequentialGroup()
-                                    .addContainerGap()
-                                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                                        .addComponent(this.scrollTxtData, GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
-                                        .addComponent(this.scrollQrcodePanel, GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE))))
-                            .addPreferredGap(ComponentPlacement.RELATED)))
-                    .addGap(16))
-        );
-        groupLayout.setVerticalGroup(
-            groupLayout.createParallelGroup(Alignment.TRAILING)
-                .addGroup(groupLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(this.scrollQrcodePanel, GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE)
-                    .addGap(10)
-                    .addComponent(this.lblData)
-                    .addGap(10)
-                    .addComponent(this.scrollTxtData, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.RELATED)
-                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addGap(4)
-                            .addComponent(this.lblErrorCorrectionLevel))
-                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                            .addComponent(this.cmbErrorCorrectionLevel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(this.lblCharset)
-                            .addComponent(this.cmbCharset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-                    .addGap(7)
-                    .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addGap(5)
-                            .addComponent(this.lblMaxVersion))
-                        .addGroup(groupLayout.createSequentialGroup()
-                            .addGap(1)
-                            .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-                                .addComponent(this.cmbMaxVersion, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(this.chkStructuredAppend, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(this.lblModuleSize)
-                                .addComponent(this.numSpinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(this.btnSave, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))))
-                    .addGap(11))
-        );
+        groupLayout
+                .setHorizontalGroup(
+                        groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+                                .createSequentialGroup()
+                                .addGroup(groupLayout
+                                        .createParallelGroup(Alignment.LEADING)
+                                        .addGroup(groupLayout.createSequentialGroup().addGap(9).addComponent(
+                                                this.lblData, GroupLayout.PREFERRED_SIZE, 50,
+                                                GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(groupLayout.createSequentialGroup().addGroup(groupLayout
+                                                .createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+                                                        .createSequentialGroup().addGap(9).addGroup(groupLayout
+                                                                .createParallelGroup(Alignment.LEADING)
+                                                                .addGroup(groupLayout.createSequentialGroup()
+                                                                        .addComponent(this.lblMaxVersion,
+                                                                                GroupLayout.PREFERRED_SIZE, 83,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(72).addComponent(this.cmbMaxVersion,
+                                                                                GroupLayout.PREFERRED_SIZE, 48,
+                                                                                GroupLayout.PREFERRED_SIZE))
+                                                                .addGroup(groupLayout.createSequentialGroup()
+                                                                        .addComponent(this.lblErrorCorrectionLevel,
+                                                                                GroupLayout.PREFERRED_SIZE, 143,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(12)
+                                                                        .addComponent(this.cmbErrorCorrectionLevel,
+                                                                                GroupLayout.PREFERRED_SIZE, 48,
+                                                                                GroupLayout.PREFERRED_SIZE)))
+                                                        .addGap(25)
+                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                                                .addGroup(groupLayout.createSequentialGroup()
+                                                                        .addComponent(this.chkStructuredAppend,
+                                                                                GroupLayout.PREFERRED_SIZE, 132,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(25)
+                                                                        .addComponent(this.lblModuleSize,
+                                                                                GroupLayout.PREFERRED_SIZE, 83,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                                                        .addComponent(this.numSpinner,
+                                                                                GroupLayout.PREFERRED_SIZE, 46,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(37)
+                                                                        .addComponent(this.btnSave,
+                                                                                GroupLayout.PREFERRED_SIZE, 103,
+                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                        .addGap(0, 0, Short.MAX_VALUE))
+                                                                .addGroup(groupLayout.createSequentialGroup()
+                                                                        .addComponent(this.lblCharset).addPreferredGap(
+                                                                                ComponentPlacement.UNRELATED)
+                                                                        .addComponent(this.cmbCharset,
+                                                                                GroupLayout.PREFERRED_SIZE, 303,
+                                                                                GroupLayout.PREFERRED_SIZE))))
+                                                .addGroup(groupLayout.createSequentialGroup().addContainerGap()
+                                                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                                                .addComponent(this.scrollTxtData,
+                                                                        GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
+                                                                .addComponent(this.scrollQrcodePanel,
+                                                                        GroupLayout.DEFAULT_SIZE, 656,
+                                                                        Short.MAX_VALUE))))
+                                                .addPreferredGap(ComponentPlacement.RELATED)))
+                                .addGap(16)));
+        groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+                .addGroup(groupLayout.createSequentialGroup().addContainerGap()
+                        .addComponent(this.scrollQrcodePanel, GroupLayout.DEFAULT_SIZE, 318, Short.MAX_VALUE).addGap(10)
+                        .addComponent(this.lblData).addGap(10)
+                        .addComponent(this.scrollTxtData, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addGroup(
+                                groupLayout.createParallelGroup(Alignment.LEADING)
+                                        .addGroup(groupLayout.createSequentialGroup().addGap(4)
+                                                .addComponent(this.lblErrorCorrectionLevel))
+                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+                                                .addComponent(this.cmbErrorCorrectionLevel, GroupLayout.PREFERRED_SIZE,
+                                                        21, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(this.lblCharset).addComponent(this.cmbCharset,
+                                                        GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                        GroupLayout.PREFERRED_SIZE)))
+                        .addGap(7)
+                        .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+                                .addGroup(
+                                        groupLayout.createSequentialGroup().addGap(5).addComponent(this.lblMaxVersion))
+                                .addGroup(groupLayout.createSequentialGroup().addGap(1)
+                                        .addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+                                                .addComponent(this.cmbMaxVersion, GroupLayout.PREFERRED_SIZE, 21,
+                                                        GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(this.chkStructuredAppend, GroupLayout.PREFERRED_SIZE, 17,
+                                                        GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(this.lblModuleSize)
+                                                .addComponent(this.numSpinner, GroupLayout.PREFERRED_SIZE,
+                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(this.btnSave, GroupLayout.PREFERRED_SIZE, 23,
+                                                        GroupLayout.PREFERRED_SIZE))))
+                        .addGap(11)));
         getContentPane().setLayout(groupLayout);
     }
 
