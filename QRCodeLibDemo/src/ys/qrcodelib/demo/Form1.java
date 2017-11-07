@@ -149,6 +149,7 @@ public class Form1 extends JFrame {
 
     private ChangeListener numSpinner_stateChanged() {
         return new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent e) {
                 updateQRCodePanel();
             }
