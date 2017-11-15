@@ -100,11 +100,11 @@ public class KanjiEncoder extends QRCodeEncoder {
 
         int code = (Byte.toUnsignedInt(charBytes[0]) << 8) | Byte.toUnsignedInt(charBytes[1]);
 
-        if (code >= 0x8140 && code <= 0x9FFC || code >= 0xE040 && code <= 0xEBBF) {
+        if (code >= 0x8140 && code <= 0x9FFC ||
+            code >= 0xE040 && code <= 0xEBBF) {
             return Byte.toUnsignedInt(charBytes[1]) >= 0x40 &&
                    Byte.toUnsignedInt(charBytes[1]) <= 0xFC &&
                    Byte.toUnsignedInt(charBytes[1]) != 0x7F;
-
         } else {
             return false;
         }

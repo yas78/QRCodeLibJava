@@ -91,11 +91,9 @@ public class NumericEncoder extends QRCodeEncoder {
         case 1:
             bitLength = 4;
             break;
-
         case 2:
             bitLength = 7;
             break;
-
         default:
             bitLength = 10;
             break;

@@ -4,9 +4,6 @@ import ys.qrcode.util.BitConverter;
 
 /**
  * BITMAPINFOHEADER構造体
- *
- * @author owner
- *
  */
 public class BITMAPINFOHEADER {
     public int   biSize          = 0;

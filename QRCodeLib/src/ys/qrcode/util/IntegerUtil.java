@@ -19,7 +19,6 @@ public class IntegerUtil {
      * 配列を左に90度に回転します。
      */
     public static int[][] rotate90(int[][] arg) {
-
         int[][] ret = new int[arg[0].length][];
 
         for (int i = 0; i < ret.length; i++) {

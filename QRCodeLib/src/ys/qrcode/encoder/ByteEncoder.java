@@ -7,9 +7,6 @@ import ys.qrcode.format.ModeIndicator;
 
 /**
  * バイトモードエンコーダー
- *
- * @author owner
- *
  */
 public class ByteEncoder extends QRCodeEncoder {
     private final Charset _charSet;

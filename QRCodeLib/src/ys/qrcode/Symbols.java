@@ -43,7 +43,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
      */
-    public Symbols(int maxVersion, ErrorCorrectionLevel ecLevel, boolean allowStructuredAppend) {
+    public Symbols(int maxVersion,
+                   ErrorCorrectionLevel ecLevel,
+                   boolean allowStructuredAppend) {
         this(maxVersion, ecLevel, allowStructuredAppend, Charset.forName("Shift_JIS"));
     }
 
@@ -59,7 +61,10 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * @param byteModeCharset
      *            バイトモードの文字エンコーディング
      */
-    public Symbols(int maxVersion, ErrorCorrectionLevel ecLevel, boolean allowStructuredAppend, Charset byteModeCharset) {
+    public Symbols(int maxVersion,
+                   ErrorCorrectionLevel ecLevel,
+                   boolean allowStructuredAppend,
+                   Charset byteModeCharset) {
         if (maxVersion < Constants.MIN_VERSION || maxVersion > Constants.MAX_VERSION) {
             throw new IllegalArgumentException("maxVersion");
         }
@@ -258,11 +263,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
                 } else {
                     return EncodingMode.ALPHA_NUMERIC;
                 }
-
             } else {
                 return EncodingMode.ALPHA_NUMERIC;
             }
-
         } else if (NumericEncoder.isInSubset(s.charAt(startIndex))) {
             int cnt = 0;
             boolean flg1 = false;
@@ -451,7 +454,6 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             } else if (ByteEncoder.isInExclusiveSubset(s.charAt(i))) {
                 flg = true;
                 break;
-
             } else {
                 break;
             }

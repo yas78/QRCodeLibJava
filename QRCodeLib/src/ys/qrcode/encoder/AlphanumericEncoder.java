@@ -44,7 +44,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
         if (_charCounter % 2 == 0) {
             _codeWords.add(wd);
             ret = 6;
-
         } else {
             int temp = _codeWords.get(_codeWords.size() - 1);
             temp *= 45;

@@ -768,7 +768,6 @@ public class Symbol {
 
         try {
             return ImageIO.read(bs);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -792,8 +791,9 @@ public class Symbol {
      *            モジュールサイズ(px)
      */
     public Image get24bppImage(int moduleSize) {
-        if (moduleSize < 1)
+        if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
+        }
 
         return get24bppImage(moduleSize, Color.BLACK, Color.WHITE);
     }
@@ -868,7 +868,6 @@ public class Symbol {
 
         try (FileOutputStream s = new FileOutputStream(fileName);) {
             s.write(dib);
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }

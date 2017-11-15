@@ -102,28 +102,20 @@ class Masking {
         switch (maskPatternReference) {
         case 0:
             return (r, c) -> (r + c) % 2 == 0;
-
         case 1:
             return (r, c) -> r % 2 == 0;
-
         case 2:
             return (r, c) -> c % 3 == 0;
-
         case 3:
             return (r, c) -> (r + c) % 3 == 0;
-
         case 4:
             return (r, c) -> ((r / 2) + (c / 3)) % 2 == 0;
-
         case 5:
             return (r, c) -> (r * c) % 2 + (r * c) % 3 == 0;
-
         case 6:
             return (r, c) -> ((r * c) % 2 + (r * c) % 3) % 2 == 0;
-
         case 7:
             return (r, c) -> ((r + c) % 2 + (r * c) % 3) % 2 == 0;
-
         default:
             throw new IllegalArgumentException("maskPatternReference");
         }
