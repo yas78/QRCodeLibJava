@@ -261,7 +261,7 @@ public class Form1 extends JFrame {
         for (Charset charset : Charset.availableCharsets().values()) {
             this.cmbCharset.addItem(charset);
         }
-        this.cmbCharset.setSelectedItem(Charset.defaultCharset());
+        this.cmbCharset.setSelectedItem(Charset.forName("Shift_JIS"));
         this.cmbCharset.addActionListener(action());
 
         // btnSave
