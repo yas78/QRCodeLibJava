@@ -229,7 +229,7 @@ public class Form1 extends JFrame {
         this.scrollTxtData.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         // lblMaxVersion
-        this.lblMaxVersion = new JLabel("Max Mersion :");
+        this.lblMaxVersion = new JLabel("Max Version :");
         this.lblMaxVersion.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
 
         // cmbMaxVersion

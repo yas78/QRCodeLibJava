@@ -60,13 +60,11 @@ public class Symbol {
         _currEncodingMode = EncodingMode.UNKNOWN;
         _currVersion = parent.getMinVersion();
 
-        _dataBitCapacity = DataCodeword.getTotalNumber(
-            parent.getErrorCorrectionLevel(), parent.getMinVersion()) * 8;
-
+        _dataBitCapacity = 8 * DataCodeword.getTotalNumber(
+            parent.getErrorCorrectionLevel(), parent.getMinVersion());
         _dataBitCounter = 0;
 
         _segments = new ArrayList<QRCodeEncoder>();
-
         _segmentCounter = new int[] {
             0, // UNKNOWN
             0, // NUMERIC
@@ -116,14 +114,12 @@ public class Symbol {
             if (_currVersion >= _parent.getMaxVersion()) {
                 return false;
             }
-
             selectVersion();
         }
 
         _currEncoder.append(c);
         _dataBitCounter += bitLength;
         _parent.updateParity(c);
-
         return true;
     }
 
@@ -138,29 +134,26 @@ public class Symbol {
      *      シンボル容量が不足している場合は false を返します。
      */
     protected boolean trySetEncodingMode(EncodingMode encMode, char c) {
-        QRCodeEncoder encoder = QRCodeEncoder.createEncoder(encMode, _parent.getByteModeCharset());
+        QRCodeEncoder encoder = QRCodeEncoder.createEncoder(
+                encMode, _parent.getByteModeCharset());
         int bitLength = encoder.getCodewordBitLength(c);
 
         while (_dataBitCapacity <
-                    _dataBitCounter + ModeIndicator.LENGTH +
-                    CharCountIndicator.getLength(_currVersion, encMode) +
-                    bitLength) {
-
+                    (_dataBitCounter + ModeIndicator.LENGTH
+                     + CharCountIndicator.getLength(_currVersion, encMode)
+                     + bitLength)) {
             if (_currVersion >= _parent.getMaxVersion()) {
                 return false;
             }
-
             selectVersion();
         }
 
-        _dataBitCounter += ModeIndicator.LENGTH +
-                           CharCountIndicator.getLength(_currVersion, encMode);
-
+        _dataBitCounter += ModeIndicator.LENGTH
+                           + CharCountIndicator.getLength(_currVersion, encMode);
         _currEncoder = encoder;
         _segments.add(_currEncoder);
         _segmentCounter[encMode.toInt()] += 1;
         _currEncodingMode = encMode;
-
         return true;
     }
 
@@ -177,8 +170,8 @@ public class Symbol {
         }
 
         _currVersion++;
-        _dataBitCapacity = DataCodeword.getTotalNumber(
-            _parent.getErrorCorrectionLevel(), _currVersion) * 8;
+        _dataBitCapacity = 8 * DataCodeword.getTotalNumber(
+            _parent.getErrorCorrectionLevel(), _currVersion);
         _parent.setMinVersion(_currVersion);
 
         if (_parent.getStructuredAppendAllowed()) {
@@ -194,23 +187,19 @@ public class Symbol {
 
         int numPreBlocks = RSBlock.getTotalNumber(
                 _parent.getErrorCorrectionLevel(), _currVersion, true);
-
         int numFolBlocks = RSBlock.getTotalNumber(
                 _parent.getErrorCorrectionLevel(), _currVersion, false);
 
         byte[][] ret = new byte[numPreBlocks + numFolBlocks][];
 
-        int index = 0;
-
         int numPreBlockDataCodewords = RSBlock.getNumberDataCodewords(
                 _parent.getErrorCorrectionLevel(), _currVersion, true);
+        int index = 0;
 
         for (int i = 0; i < numPreBlocks; i++) {
             byte[] data = new byte[numPreBlockDataCodewords];
-
             System.arraycopy(dataBytes, index, data, 0, data.length);
             index += data.length;
-
             ret[i] = data;
         }
 
@@ -219,10 +208,8 @@ public class Symbol {
 
         for (int i = numPreBlocks; i < numPreBlocks + numFolBlocks; i++) {
             byte[] data = new byte[numFolBlockDataCodewords];
-
             System.arraycopy(dataBytes, index, data, 0, data.length);
             index += data.length;
-
             ret[i] = data;
         }
 
@@ -238,10 +225,8 @@ public class Symbol {
     private byte[][] buildErrorCorrectionBlock(byte[][] dataBlock) {
         int numECCodewords = RSBlock.getNumberECCodewords(
                 _parent.getErrorCorrectionLevel(), _currVersion);
-
         int numPreBlocks = RSBlock.getTotalNumber(
                 _parent.getErrorCorrectionLevel(), _currVersion, true);
-
         int numFolBlocks = RSBlock.getTotalNumber(
                 _parent.getErrorCorrectionLevel(), _currVersion, false);
 
@@ -400,7 +385,7 @@ public class Symbol {
 
         boolean flag = true;
 
-        while (bs.getLength() < numDataCodewords * 8) {
+        while (bs.getLength() < 8 * numDataCodewords) {
             bs.append(flag ? 236 : 17, 8);
             flag = !flag;
         }
@@ -542,8 +527,13 @@ public class Symbol {
 
         int hByteLen = (width + 7) / 8;
 
-        int pack8bit    = (width % 8) == 0 ? 0 : 8 - (width % 8);
-        int pack32bit   = (hByteLen % 4) == 0 ? 0 : (4 - (hByteLen % 4)) * 8;
+        int pack8bit = 0;
+        if (width % 8 > 0)
+            pack8bit = 8 - (width % 8);
+
+        int pack32bit = 0;
+        if (hByteLen % 4 > 0)
+            pack32bit = 8 * (4 - (hByteLen % 4));
 
         BitSequence bs = new BitSequence();
 
@@ -662,11 +652,13 @@ public class Symbol {
         int width = moduleMatrix.length * moduleSize;
         int height = width;
 
-        int hByteLen = width * 3;
+        int hByteLen = 3 * width;
 
-        int pack4byte = hByteLen % 4 == 0 ? 0 : 4 - (hByteLen % 4);
+        int pack4byte = 0;
+        if (hByteLen % 4 > 0)
+            pack4byte = 4 - (hByteLen % 4);
 
-        byte[] dataBlock = new byte[(hByteLen + pack4byte) * (height * 3)];
+        byte[] dataBlock = new byte[(hByteLen + pack4byte) * (3 * height)];
 
         int idx = 0;
 
@@ -675,10 +667,9 @@ public class Symbol {
                 for (int c = 0; c < moduleMatrix[r].length; c++) {
                     for (int j = 1; j <= moduleSize; j++) {
                         Color color = moduleMatrix[r][c] > 0 ? foreColor : backColor;
-                        dataBlock[idx + 0] = (byte) color.getBlue();
-                        dataBlock[idx + 1] = (byte) color.getGreen();
-                        dataBlock[idx + 2] = (byte) color.getRed();
-                        idx += 3;
+                        dataBlock[idx++] = (byte) color.getBlue();
+                        dataBlock[idx++] = (byte) color.getGreen();
+                        dataBlock[idx++] = (byte) color.getRed();
                     }
                 }
 
