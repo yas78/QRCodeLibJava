@@ -11,7 +11,7 @@ public class Program {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    Form1 form1 = new Form1();
+                    FormMain form1 = new FormMain();
                     form1.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
