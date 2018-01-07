@@ -1,6 +1,6 @@
 package ys.image;
 
-import ys.qrcode.util.BitConverter;
+import ys.qrcode.misc.BitConverter;
 
 /**
  * BITMAPFILEHEADER構造体

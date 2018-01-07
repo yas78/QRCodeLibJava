@@ -4,7 +4,7 @@ import java.nio.charset.Charset;
 
 import ys.qrcode.EncodingMode;
 import ys.qrcode.format.ModeIndicator;
-import ys.qrcode.util.BitSequence;
+import ys.qrcode.misc.BitSequence;
 
 /**
  * 漢字モードエンコーダー

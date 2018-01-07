@@ -18,8 +18,8 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
     int _minVersion;
 
-    private final int                  _maxVersion;
     private final ErrorCorrectionLevel _errorCorrectionLevel;
+    private final int                  _maxVersion;
     private final boolean              _structuredAppendAllowed;
     private final Charset              _byteModeCharset;
 
@@ -30,7 +30,29 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * インスタンスを初期化します。
      */
     public Symbols() {
-        this(Constants.MAX_VERSION, ErrorCorrectionLevel.M, false);
+        this(ErrorCorrectionLevel.M);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     */
+    public Symbols(ErrorCorrectionLevel ecLevel) {
+        this(ecLevel, Constants.MAX_VERSION, false);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param byteModeCharset
+     *            バイトモードの文字エンコーディング
+     */
+    public Symbols(ErrorCorrectionLevel ecLevel, String byteModeCharset) {
+        this(ecLevel, Constants.MAX_VERSION, false, byteModeCharset);
     }
 
     /**
@@ -38,15 +60,21 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param maxVersion
      *            型番の上限
-     * @param ecLevel
-     *            誤り訂正レベル
+     */
+    public Symbols(int maxVersion) {
+        this(maxVersion, false);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param maxVersion
+     *            型番の上限
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
      */
-    public Symbols(int maxVersion,
-                   ErrorCorrectionLevel ecLevel,
-                   boolean allowStructuredAppend) {
-        this(maxVersion, ecLevel, allowStructuredAppend, Charset.forName("Shift_JIS"));
+    public Symbols(int maxVersion, boolean allowStructuredAppend) {
+        this(ErrorCorrectionLevel.M, maxVersion, allowStructuredAppend);
     }
 
     /**
@@ -54,32 +82,79 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param maxVersion
      *            型番の上限
-     * @param ecLevel
-     *            誤り訂正レベル
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
      * @param byteModeCharset
      *            バイトモードの文字エンコーディング
      */
     public Symbols(int maxVersion,
-                   ErrorCorrectionLevel ecLevel,
                    boolean allowStructuredAppend,
-                   Charset byteModeCharset) {
-        if (maxVersion < Constants.MIN_VERSION || maxVersion > Constants.MAX_VERSION) {
+                   String byteModeCharset) {
+        this(ErrorCorrectionLevel.M,
+             maxVersion,
+             allowStructuredAppend,
+             byteModeCharset);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param maxVersion
+     *            型番の上限
+     * @param allowStructuredAppend
+     *            複数シンボルへの分割を許可するには true を指定します。
+     */
+    public Symbols(ErrorCorrectionLevel ecLevel,
+                   int maxVersion,
+                   boolean allowStructuredAppend) {
+        this(ecLevel, maxVersion, allowStructuredAppend, "Shift_JIS");
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param byteModeCharset
+     *            バイトモードの文字エンコーディング
+     */
+    public Symbols(String byteModeCharset) {
+        this(ErrorCorrectionLevel.M, 40, false, byteModeCharset);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param maxVersion
+     *            型番の上限
+     * @param allowStructuredAppend
+     *            複数シンボルへの分割を許可するには true を指定します。
+     * @param byteModeCharset
+     *            バイトモードの文字エンコーディング
+     */
+    public Symbols(ErrorCorrectionLevel ecLevel,
+                   int maxVersion,
+                   boolean allowStructuredAppend,
+                   String byteModeCharset) {
+        if (maxVersion < Constants.MIN_VERSION ||
+            maxVersion > Constants.MAX_VERSION) {
             throw new IllegalArgumentException("maxVersion");
         }
 
         _items = new ArrayList<Symbol>();
 
         _minVersion = 1;
-        _maxVersion = maxVersion;
-        _errorCorrectionLevel = ecLevel;
-        _structuredAppendAllowed = allowStructuredAppend;
-        _byteModeCharset = byteModeCharset;
+
+        _errorCorrectionLevel       = ecLevel;
+        _maxVersion                 = maxVersion;
+        _structuredAppendAllowed    = allowStructuredAppend;
+        _byteModeCharset            = Charset.forName(byteModeCharset);
 
         _structuredAppendParity = 0;
-
         _currSymbol = new Symbol(this);
+
         _items.add(_currSymbol);
     }
 

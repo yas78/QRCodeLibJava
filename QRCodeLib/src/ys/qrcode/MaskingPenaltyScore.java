@@ -3,7 +3,7 @@ package ys.qrcode;
 import java.util.ArrayList;
 import java.util.List;
 
-import ys.qrcode.util.IntegerUtil;
+import ys.qrcode.misc.IntegerUtil;
 
 /**
  * マスクされたシンボルの失点評価

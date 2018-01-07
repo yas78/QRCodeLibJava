@@ -1,4 +1,4 @@
-package ys.qrcode.util;
+package ys.qrcode.misc;
 
 public class IntegerUtil {
     /**

@@ -2,7 +2,7 @@ package ys.qrcode.encoder;
 
 import ys.qrcode.EncodingMode;
 import ys.qrcode.format.ModeIndicator;
-import ys.qrcode.util.BitSequence;
+import ys.qrcode.misc.BitSequence;
 
 /**
  * 数字モードエンコーダー

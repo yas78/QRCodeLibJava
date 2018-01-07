@@ -25,7 +25,8 @@ import ys.qrcode.format.Module;
 import ys.qrcode.format.RSBlock;
 import ys.qrcode.format.StructuredAppend;
 import ys.qrcode.format.SymbolSequenceIndicator;
-import ys.qrcode.util.BitSequence;
+import ys.qrcode.misc.BitSequence;
+import ys.qrcode.misc.ColorCode;
 
 /**
  * シンボルを表します。
@@ -165,8 +166,8 @@ public class Symbol {
             int num = _segmentCounter[i];
             EncodingMode encMode = EncodingMode.getEnum(i);
 
-            _dataBitCounter += num * CharCountIndicator.getLength(_currVersion + 1, encMode) -
-                               num * CharCountIndicator.getLength(_currVersion + 0, encMode);
+            _dataBitCounter += num * CharCountIndicator.getLength(_currVersion + 1, encMode) 
+                               - num * CharCountIndicator.getLength(_currVersion + 0, encMode);
         }
 
         _currVersion++;
@@ -335,17 +336,22 @@ public class Symbol {
     }
 
     private void writeStructuredAppendHeader(BitSequence bs) {
-        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE, ModeIndicator.LENGTH);
-        bs.append(_position, SymbolSequenceIndicator.POSITION_LENGTH);
-        bs.append(_parent.getCount() - 1, SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH);
-        bs.append(_parent.getStructuredAppendParity(), StructuredAppend.PARITY_DATA_LENGTH);
+        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE, 
+                  ModeIndicator.LENGTH);
+        bs.append(_position, 
+                  SymbolSequenceIndicator.POSITION_LENGTH);
+        bs.append(_parent.getCount() - 1, 
+                  SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH);
+        bs.append(_parent.getStructuredAppendParity(), 
+                  StructuredAppend.PARITY_DATA_LENGTH);
     }
 
     private void writeSegments(BitSequence bs) {
         for (QRCodeEncoder segment : _segments) {
             bs.append(segment.getModeIndicator(), ModeIndicator.LENGTH);
             bs.append(segment.getCharCount(),
-                      CharCountIndicator.getLength(_currVersion, segment.getEncodingMode()));
+                      CharCountIndicator.getLength(
+                              _currVersion, segment.getEncodingMode()));
 
             byte[] data = segment.getBytes();
 
@@ -359,7 +365,8 @@ public class Symbol {
                 codewordBitLength = 8;
             }
 
-            bs.append(Byte.toUnsignedInt(data[data.length - 1]) >> (8 - codewordBitLength), codewordBitLength);
+            bs.append(Byte.toUnsignedInt(data[data.length - 1]) 
+                        >> (8 - codewordBitLength), codewordBitLength);
         }
     }
 
@@ -424,7 +431,9 @@ public class Symbol {
         int maskPatternReference = Masking.apply(
                 moduleMatrix, _currVersion, _parent.getErrorCorrectionLevel());
 
-        FormatInfo.place(moduleMatrix, _parent.getErrorCorrectionLevel(), maskPatternReference);
+        FormatInfo.place(moduleMatrix, 
+                         _parent.getErrorCorrectionLevel(), 
+                         maskPatternReference);
 
         if (_currVersion >= 7) {
             VersionInfo.place(moduleMatrix, _currVersion);
@@ -502,7 +511,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get1bppDIB(moduleSize, Color.BLACK, Color.WHITE);
+        return get1bppDIB(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -510,15 +519,18 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public byte[] get1bppDIB(int moduleSize, Color foreColor, Color backColor) {
+    public byte[] get1bppDIB(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("(moduleSize");
         }
+
+        Color foreColor = Color.decode(foreRgb);
+        Color backColor = Color.decode(backRgb);
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
@@ -629,7 +641,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get24bppDIB(moduleSize, Color.BLACK, Color.WHITE);
+        return get24bppDIB(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -637,15 +649,18 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public byte[] get24bppDIB(int moduleSize, Color foreColor, Color backColor) {
+    public byte[] get24bppDIB(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
+
+        Color foreColor = Color.decode(foreRgb);
+        Color backColor = Color.decode(backRgb);
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
@@ -734,7 +749,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get1bppImage(moduleSize, Color.BLACK, Color.WHITE);
+        return get1bppImage(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -742,17 +757,17 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public Image get1bppImage(int moduleSize, Color foreColor, Color backColor) {
+    public Image get1bppImage(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get1bppDIB(moduleSize, foreColor, backColor);
+        byte[] dib = get1bppDIB(moduleSize, foreRgb, backRgb);
 
         InputStream bs = new ByteArrayInputStream(dib);
         BufferedImage bi = null;
@@ -786,7 +801,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get24bppImage(moduleSize, Color.BLACK, Color.WHITE);
+        return get24bppImage(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -794,17 +809,17 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public Image get24bppImage(int moduleSize, Color foreColor, Color backColor) {
+    public Image get24bppImage(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get24bppDIB(moduleSize, foreColor, backColor);
+        byte[] dib = get24bppDIB(moduleSize, foreRgb, backRgb);
 
         Toolkit toolKit = Toolkit.getDefaultToolkit();
         Image ret = toolKit.createImage(dib);
@@ -835,7 +850,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        save1bppDIB(fileName, moduleSize, Color.BLACK, Color.WHITE);
+        save1bppDIB(fileName, moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -845,17 +860,17 @@ public class Symbol {
      *            ファイル名
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public void save1bppDIB(String fileName, int moduleSize, Color foreColor, Color backColor) {
+    public void save1bppDIB(String fileName, int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get1bppDIB(moduleSize, foreColor, backColor);
+        byte[] dib = get1bppDIB(moduleSize, foreRgb, backRgb);
 
         try (FileOutputStream s = new FileOutputStream(fileName);) {
             s.write(dib);
@@ -887,7 +902,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        save24bppDIB(fileName, moduleSize, Color.BLACK, Color.WHITE);
+        save24bppDIB(fileName, moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
     /**
@@ -897,17 +912,17 @@ public class Symbol {
      *            ファイル名
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param foreColor
+     * @param foreRgb
      *            前景色
-     * @param backColor
+     * @param backRgb
      *            背景色
      */
-    public void save24bppDIB(String fileName, int moduleSize, Color foreColor, Color backColor) {
+    public void save24bppDIB(String fileName, int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get24bppDIB(moduleSize, foreColor, backColor);
+        byte[] dib = get24bppDIB(moduleSize, foreRgb, backRgb);
 
         try (FileOutputStream stream = new FileOutputStream(fileName);) {
             stream.write(dib);

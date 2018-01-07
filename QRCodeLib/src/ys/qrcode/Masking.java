@@ -2,7 +2,7 @@ package ys.qrcode;
 
 import java.util.function.BiPredicate;
 
-import ys.qrcode.util.IntegerUtil;
+import ys.qrcode.misc.IntegerUtil;
 
 class Masking {
     /**

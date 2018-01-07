@@ -41,7 +41,7 @@ import ys.qrcode.Symbols;
 @SuppressWarnings("serial")
 public class Form1 extends JFrame {
     public Form1() {
-        setTitle("QRCode");
+        setTitle("QR Code");
         initializeComponent();
     }
 
@@ -54,12 +54,12 @@ public class Form1 extends JFrame {
             return;
         }
 
-        int version = (int) cmbMaxVersion.getSelectedItem();
         ErrorCorrectionLevel ecLevel = (ErrorCorrectionLevel) cmbErrorCorrectionLevel.getSelectedItem();
+        int version = (int) cmbMaxVersion.getSelectedItem();
         boolean allowStructuredAppend = chkStructuredAppend.isSelected();
         Charset charset = (Charset) cmbCharset.getSelectedItem();
 
-        Symbols symbols = new Symbols(version, ecLevel, allowStructuredAppend, charset);
+        Symbols symbols = new Symbols(ecLevel, version, allowStructuredAppend, charset.name());
 
         try {
             symbols.appendString(txtData.getText());
@@ -106,12 +106,12 @@ public class Form1 extends JFrame {
                 isMonochrome = chooser.getFileFilter().equals(filtermonochrome);
                 baseName = new File(file.getParent(), FileUtil.getFileNameWithoutExtension(file.getName())).getPath();
 
-                int version = (int) cmbMaxVersion.getSelectedItem();
                 ErrorCorrectionLevel ecLevel = (ErrorCorrectionLevel) cmbErrorCorrectionLevel.getSelectedItem();
+                int version = (int) cmbMaxVersion.getSelectedItem();
                 boolean allowStructuredAppend = chkStructuredAppend.isSelected();
                 Charset charset = (Charset) cmbCharset.getSelectedItem();
 
-                Symbols symbols = new Symbols(version, ecLevel, allowStructuredAppend, charset);
+                Symbols symbols = new Symbols(ecLevel, version, allowStructuredAppend, charset.name());
 
                 try {
                     symbols.appendString(txtData.getText());
