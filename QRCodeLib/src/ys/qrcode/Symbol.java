@@ -166,7 +166,7 @@ public class Symbol {
             int num = _segmentCounter[i];
             EncodingMode encMode = EncodingMode.getEnum(i);
 
-            _dataBitCounter += num * CharCountIndicator.getLength(_currVersion + 1, encMode) 
+            _dataBitCounter += num * CharCountIndicator.getLength(_currVersion + 1, encMode)
                                - num * CharCountIndicator.getLength(_currVersion + 0, encMode);
         }
 
@@ -336,13 +336,13 @@ public class Symbol {
     }
 
     private void writeStructuredAppendHeader(BitSequence bs) {
-        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE, 
+        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE,
                   ModeIndicator.LENGTH);
-        bs.append(_position, 
+        bs.append(_position,
                   SymbolSequenceIndicator.POSITION_LENGTH);
-        bs.append(_parent.getCount() - 1, 
+        bs.append(_parent.getCount() - 1,
                   SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH);
-        bs.append(_parent.getStructuredAppendParity(), 
+        bs.append(_parent.getStructuredAppendParity(),
                   StructuredAppend.PARITY_DATA_LENGTH);
     }
 
@@ -365,7 +365,7 @@ public class Symbol {
                 codewordBitLength = 8;
             }
 
-            bs.append(Byte.toUnsignedInt(data[data.length - 1]) 
+            bs.append(Byte.toUnsignedInt(data[data.length - 1])
                         >> (8 - codewordBitLength), codewordBitLength);
         }
     }
@@ -431,8 +431,8 @@ public class Symbol {
         int maskPatternReference = Masking.apply(
                 moduleMatrix, _currVersion, _parent.getErrorCorrectionLevel());
 
-        FormatInfo.place(moduleMatrix, 
-                         _parent.getErrorCorrectionLevel(), 
+        FormatInfo.place(moduleMatrix,
+                         _parent.getErrorCorrectionLevel(),
                          maskPatternReference);
 
         if (_currVersion >= 7) {
@@ -673,7 +673,7 @@ public class Symbol {
         if (hByteLen % 4 > 0)
             pack4byte = 4 - (hByteLen % 4);
 
-        byte[] dataBlock = new byte[(hByteLen + pack4byte) * (3 * height)];
+        byte[] dataBlock = new byte[(hByteLen + pack4byte) * height];
 
         int idx = 0;
 
