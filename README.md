@@ -12,7 +12,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 
 
 ## クイックスタート
-QRCodeLibプロジェクト、またはビルドした QRCodeLib.dll を参照設定してください。
+QRCodeLibプロジェクト、またはビルドした QRCodeLib.jar へのビルドパスを設定してください。
 
 
 ## 使用方法
@@ -53,7 +53,8 @@ Symbols symbols = new Symbols("utf-8");
 ```
 
 ### 例５．分割QRコードを作成する
-Symbolsクラスのコンストラクタ引数 allowStructuredAppend を設定します。型番の上限(maxVersion引数)を指定しない場合は、型番40を上限として分割されます。
+Symbolsクラスのコンストラクタ引数 allowStructuredAppend を設定します。  
+型番の上限(maxVersion引数)を指定しない場合は、型番40を上限として分割されます。
 
 ```java
 Symbols symbols = new Symbols(true);
