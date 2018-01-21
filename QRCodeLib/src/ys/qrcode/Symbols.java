@@ -68,6 +68,16 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     /**
      * インスタンスを初期化します。
      *
+     * @param allowStructuredAppend
+     *            複数シンボルへの分割を許可するには true を指定します。
+     */
+    public Symbols(boolean allowStructuredAppend) {
+        this(40, allowStructuredAppend);
+    }
+
+    /**
+     * インスタンスを初期化します。
+     *
      * @param maxVersion
      *            型番の上限
      * @param allowStructuredAppend
