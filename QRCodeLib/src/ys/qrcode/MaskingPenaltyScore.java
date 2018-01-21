@@ -181,14 +181,12 @@ class MaskingPenaltyScore {
      * 全体に対する暗モジュールの占める割合について失点を計算します。
      */
     private static int calcProportionOfDarkModules(int[][] moduleMatrix) {
-
         int darkCount = 0;
 
-        for (int r = 0; r < moduleMatrix.length; r++) {
-            for (int c = 0; c < moduleMatrix[r].length; c++) {
-                if (moduleMatrix[r][c] > 0) {
+        for (int[] columns : moduleMatrix) {
+            for (int value : columns) {
+                if (value > 0)
                     darkCount++;
-                }
             }
         }
 
