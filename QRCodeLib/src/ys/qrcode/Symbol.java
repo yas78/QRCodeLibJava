@@ -526,7 +526,7 @@ public class Symbol {
      */
     public byte[] get1bppDIB(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
-            throw new IllegalArgumentException("(moduleSize");
+            throw new IllegalArgumentException("moduleSize");
         }
 
         Color foreColor = Color.decode(foreRgb);
