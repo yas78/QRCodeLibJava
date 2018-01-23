@@ -21,7 +21,6 @@ QRCodeLibプロジェクト、またはビルドした QRCodeLib.jar へのビ�
 ```java
 import java.awt.Image;
 
-import ys.qrcode.ErrorCorrectionLevel;
 import ys.qrcode.Symbols;
 import ys.qrcode.Symbol;
 
@@ -37,6 +36,8 @@ public void Example() {
 Symbolsクラスのコンストラクタ引数 ecLevel に、ErrorCorrectionLevel列挙型の値を設定します。
 
 ```java
+import ys.qrcode.ErrorCorrectionLevel;
+
 Symbols symbols = new Symbols(ErrorCorrectionLevel.H);
 ```
 
