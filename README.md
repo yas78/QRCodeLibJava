@@ -85,3 +85,32 @@ symbol.save1bppDIB("D:\\qrcode1bpp2.bmp", 10); // 10 pixel par module
 symbol.save24bppDIB("D:\\qrcode24bpp3.bmp");
 symbol.save24bppDIB("D:\\qrcode24bpp4.bmp", 10); // 10 pixel par module
 ```
+
+### 例７．様々な画像形式で保存する
+ImageIOクラスのwriteメソッドを使用します。
+
+```java
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+import ys.qrcode.Symbols;
+
+public void Example() {
+    Symbols symbols = new Symbols();
+    symbols.appendString("012345abcdefg");
+
+    BufferedImage image = symbols.get(0).get24bppImage();
+
+    try {
+        // PNG
+        ImageIO.write(image, "PNG", new java.io.File("D:\\qrcode.png"));
+        // GIF
+        ImageIO.write(image, "GIF", new java.io.File("D:\\qrcode.gif"));
+        // JPEG
+        ImageIO.write(image, "JPEG", new java.io.File("D:\\qrcode.jpg"));
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+````
