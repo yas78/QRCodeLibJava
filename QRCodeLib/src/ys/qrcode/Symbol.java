@@ -1,8 +1,6 @@
 package ys.qrcode;
 
 import java.awt.Color;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
@@ -734,7 +732,7 @@ public class Symbol {
     /**
      * 1bppのシンボル画像を返します。
      */
-    public Image get1bppImage() {
+    public BufferedImage get1bppImage() {
         return get1bppImage(5);
     }
 
@@ -744,7 +742,7 @@ public class Symbol {
      * @param moduleSize
      *            モジュールサイズ(px)
      */
-    public Image get1bppImage(int moduleSize) {
+    public BufferedImage get1bppImage(int moduleSize) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
@@ -762,23 +760,23 @@ public class Symbol {
      * @param backRgb
      *            背景色
      */
-    public Image get1bppImage(int moduleSize, String foreRgb, String backRgb) {
+    public BufferedImage get1bppImage(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
         byte[] dib = get1bppDIB(moduleSize, foreRgb, backRgb);
+        BufferedImage ret = null;
 
-        InputStream bs = new ByteArrayInputStream(dib);
-        BufferedImage bi = null;
-
-        try {
-            return ImageIO.read(bs);
+        try (InputStream bs = new ByteArrayInputStream(dib)) {
+            try {
+                ret = ImageIO.read(bs);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Image ret = bi;
 
         return ret;
     }
@@ -786,7 +784,7 @@ public class Symbol {
     /**
      * 24bppのシンボル画像を返します。
      */
-    public Image get24bppImage() {
+    public BufferedImage get24bppImage() {
         return get24bppImage(5);
     }
 
@@ -796,7 +794,7 @@ public class Symbol {
      * @param moduleSize
      *            モジュールサイズ(px)
      */
-    public Image get24bppImage(int moduleSize) {
+    public BufferedImage get24bppImage(int moduleSize) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
@@ -814,15 +812,23 @@ public class Symbol {
      * @param backRgb
      *            背景色
      */
-    public Image get24bppImage(int moduleSize, String foreRgb, String backRgb) {
+    public BufferedImage get24bppImage(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
         byte[] dib = get24bppDIB(moduleSize, foreRgb, backRgb);
+        BufferedImage ret = null;
 
-        Toolkit toolKit = Toolkit.getDefaultToolkit();
-        Image ret = toolKit.createImage(dib);
+        try (InputStream bs = new ByteArrayInputStream(dib)) {
+            try {
+                ret = ImageIO.read(bs);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return ret;
     }

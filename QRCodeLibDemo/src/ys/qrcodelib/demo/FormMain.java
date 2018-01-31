@@ -70,6 +70,7 @@ public class FormMain extends JFrame {
 
         for (Symbol symbol : symbols) {
             Image image = symbol.get1bppImage((int) numSpinner.getValue());
+
             ImageIcon icon = new ImageIcon(image);
             JLabel label = new JLabel();
             label.setIcon(icon);
