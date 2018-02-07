@@ -65,7 +65,7 @@ Symbols symbols = new Symbols(true);
 
 ```java
 Symbols symbols = new Symbols(1, true);
-symbols.AppendString("abcdefghijklmnopqrstuvwxyz");
+symbols.appendString("abcdefghijklmnopqrstuvwxyz");
 
 for (Symbol symbol : symbols) {
     Image image = symbol.get24bppImage();
