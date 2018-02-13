@@ -30,19 +30,19 @@ import ys.qrcode.misc.ColorCode;
  * シンボルを表します。
  */
 public class Symbol {
-    final Symbols _parent;
+    private final Symbols _parent;
 
-    final int _position;
+    private final int _position;
 
-    QRCodeEncoder _currEncoder;
-    EncodingMode  _currEncodingMode;
-    int           _currVersion;
+    private QRCodeEncoder _currEncoder;
+    private EncodingMode  _currEncodingMode;
+    private int           _currVersion;
 
-    int _dataBitCapacity;
-    int _dataBitCounter;
+    private int _dataBitCapacity;
+    private int _dataBitCounter;
 
-    final List<QRCodeEncoder> _segments;
-    final int[]               _segmentCounter;
+    private final List<QRCodeEncoder> _segments;
+    private final int[]               _segmentCounter;
 
     /**
      * インスタンスを初期化します。

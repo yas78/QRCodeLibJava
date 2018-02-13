@@ -16,15 +16,15 @@ import ys.qrcode.encoder.NumericEncoder;
 public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private final List<Symbol> _items;
 
-    int _minVersion;
+    private int _minVersion;
 
     private final ErrorCorrectionLevel _errorCorrectionLevel;
     private final int                  _maxVersion;
     private final boolean              _structuredAppendAllowed;
     private final Charset              _byteModeCharset;
 
-    Symbol _currSymbol;
-    int    _structuredAppendParity;
+    private Symbol _currSymbol;
+    private int    _structuredAppendParity;
 
     /**
      * インスタンスを初期化します。
