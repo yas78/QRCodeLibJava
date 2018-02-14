@@ -532,7 +532,7 @@ public class Symbol {
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
-        int width   = moduleMatrix.length * moduleSize;
+        int width   = moduleSize * moduleMatrix.length;
         int height  = width;
 
         int hByteLen = (width + 7) / 8;
@@ -662,7 +662,7 @@ public class Symbol {
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
-        int width = moduleMatrix.length * moduleSize;
+        int width  = moduleSize * moduleMatrix.length;
         int height = width;
 
         int hByteLen = 3 * width;
