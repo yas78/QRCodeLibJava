@@ -75,7 +75,7 @@ public class ByteEncoder extends QRCodeEncoder {
 
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
-        return charBytes.length * 8;
+        return 8 * charBytes.length;
     }
 
     /**
