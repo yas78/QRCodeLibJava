@@ -13,8 +13,8 @@ public class Codeword {
      *            型番
      */
     public static int getTotalNumber(int version) {
-        assert version >= Constants.MIN_VERSION && version <=
-                          Constants.MAX_VERSION;
+        assert version >= Constants.MIN_VERSION &&
+               version <= Constants.MAX_VERSION;
 
         return _totalNumbers[version];
     }
