@@ -238,7 +238,8 @@ public class Symbol {
         int[] gp = GeneratorPolynomials.get(numECCodewords);
 
         for (int blockIndex = 0; blockIndex < dataBlock.length; blockIndex++) {
-            int[] data = new int[dataBlock[blockIndex].length + ret[blockIndex].length];
+            int size = dataBlock[blockIndex].length + ret[blockIndex].length;
+            int[] data = new int[size];
             int eccIndex = data.length - 1;
 
             for (int i = 0; i < dataBlock[blockIndex].length; i++) {
