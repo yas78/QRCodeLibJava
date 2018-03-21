@@ -10,10 +10,10 @@ import ys.qrcode.EncodingMode;
  * エンコーダーの基本抽象クラス
  */
 public abstract class QRCodeEncoder {
-    protected List<Integer> _codeWords = new ArrayList<Integer>();
+    List<Integer> _codeWords = new ArrayList<Integer>();
 
-    protected int _charCounter = 0;
-    protected int _bitCounter  = 0;
+    int _charCounter = 0;
+    int _bitCounter  = 0;
 
     /**
      * インスタンスを初期化します。
