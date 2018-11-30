@@ -51,7 +51,7 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
         int ret = 0;
@@ -71,7 +71,7 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
@@ -95,27 +95,27 @@ public class ByteEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInSubset(char c) {
+    public static boolean inSubset(char c) {
         return true;
     }
 
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInExclusiveSubset(char c) {
-        if (NumericEncoder.isInSubset(c)) {
+    public static boolean inExclusiveSubset(char c) {
+        if (NumericEncoder.inSubset(c)) {
             return false;
         }
 
-        if (AlphanumericEncoder.isInSubset(c)) {
+        if (AlphanumericEncoder.inSubset(c)) {
             return false;
         }
 
-        if (KanjiEncoder.isInSubset(c)) {
+        if (KanjiEncoder.inSubset(c)) {
             return false;
         }
 
-        if (isInSubset(c)) {
+        if (inSubset(c)) {
             return true;
         }
 

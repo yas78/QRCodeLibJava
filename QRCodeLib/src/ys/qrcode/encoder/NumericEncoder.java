@@ -39,7 +39,7 @@ public class NumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         int wd = Integer.parseInt(String.valueOf(c));
         int ret;
@@ -66,7 +66,7 @@ public class NumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         if (_charCounter % 3 == 0) {
             return 4;
@@ -107,14 +107,14 @@ public class NumericEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInSubset(char c) {
+    public static boolean inSubset(char c) {
         return c >= '0' && c <= '9';
     }
 
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInExclusiveSubset(char c) {
-        return isInSubset(c);
+    public static boolean inExclusiveSubset(char c) {
+        return inSubset(c);
     }
 }

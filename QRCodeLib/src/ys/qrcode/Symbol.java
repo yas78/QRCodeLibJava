@@ -772,11 +772,11 @@ public class Symbol {
         try (InputStream bs = new ByteArrayInputStream(dib)) {
             try {
                 ret = ImageIO.read(bs);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return ret;
@@ -824,11 +824,11 @@ public class Symbol {
         try (InputStream bs = new ByteArrayInputStream(dib)) {
             try {
                 ret = ImageIO.read(bs);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
 
         return ret;

@@ -25,7 +25,7 @@ class FormatInfo {
         int c1 = moduleMatrix.length - 1;
 
         for (int i = 0; i <= 7; i++) {
-            int temp = ((formatInfo & (1 << i)) > 0 ? 1 : 0) ^ formatInfoMaskArray[i];
+            int temp = ((formatInfo & (1 << i)) > 0 ? 1 : 0) ^ _formatInfoMaskArray[i];
 
             int v = (temp > 0) ? 3 : -3;
 
@@ -44,7 +44,7 @@ class FormatInfo {
         int c2 = 7;
 
         for (int i = 8; i <= 14; i++) {
-            int tmp = ((formatInfo & (1 << i)) > 0 ? 1 : 0) ^ formatInfoMaskArray[i];
+            int tmp = ((formatInfo & (1 << i)) > 0 ? 1 : 0) ^ _formatInfoMaskArray[i];
             int v = (tmp > 0) ? 3 : -3;
 
             moduleMatrix[r2][8] = v;
@@ -124,7 +124,7 @@ class FormatInfo {
     };
 
     // 形式情報のマスクパターン
-    private static int[] formatInfoMaskArray = {
+    private static int[] _formatInfoMaskArray = {
         0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1
     };
 }

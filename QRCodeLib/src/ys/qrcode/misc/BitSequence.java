@@ -9,7 +9,8 @@ public class BitSequence {
     private int _bitCounter = 0;
     private int _space      = 0;
 
-    public BitSequence() { }
+    public BitSequence() {
+    }
 
     /**
      * ビット数を取得します。
@@ -52,7 +53,7 @@ public class BitSequence {
                 _space = 0;
 
             } else {
-                tmp = (byte)(Byte.toUnsignedInt(tmp) | remainingData << (_space - remainingLength));
+                tmp = (byte) (Byte.toUnsignedInt(tmp) | remainingData << (_space - remainingLength));
                 _buffer.set(_buffer.size() - 1, tmp);
 
                 _bitCounter += remainingLength;

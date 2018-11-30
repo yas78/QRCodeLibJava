@@ -22,6 +22,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private final int                  _maxVersion;
     private final boolean              _structuredAppendAllowed;
     private final Charset              _byteModeCharset;
+    private final Charset              _shiftJISCharset;
 
     private Symbol _currSymbol;
     private int    _structuredAppendParity;
@@ -72,7 +73,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            複数シンボルへの分割を許可するには true を指定します。
      */
     public Symbols(boolean allowStructuredAppend) {
-        this(40, allowStructuredAppend);
+        this(Constants.MAX_VERSION, allowStructuredAppend);
     }
 
     /**
@@ -129,7 +130,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            バイトモードの文字エンコーディング
      */
     public Symbols(String byteModeCharset) {
-        this(ErrorCorrectionLevel.M, 40, false, byteModeCharset);
+        this(ErrorCorrectionLevel.M, Constants.MAX_VERSION, false, byteModeCharset);
     }
 
     /**
@@ -161,6 +162,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         _maxVersion                 = maxVersion;
         _structuredAppendAllowed    = allowStructuredAppend;
         _byteModeCharset            = Charset.forName(byteModeCharset);
+        _shiftJISCharset            = Charset.forName("shift_jis");
 
         _structuredAppendParity = 0;
         _currSymbol = new Symbol(this);
@@ -312,16 +314,16 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private EncodingMode selectInitialMode(String s, int startIndex) {
         int version = _currSymbol.getVersion();
 
-        if (KanjiEncoder.isInSubset(s.charAt(startIndex))) {
+        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
-        } else if (ByteEncoder.isInExclusiveSubset(s.charAt(startIndex))) {
+        } else if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
-        } else if (AlphanumericEncoder.isInExclusiveSubset(s.charAt(startIndex))) {
+        } else if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             int cnt = 0;
             boolean flg = false;
 
             for (int i = startIndex; i < s.length(); i++) {
-                if (AlphanumericEncoder.isInExclusiveSubset(s.charAt(i))) {
+                if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
                     cnt++;
                 } else {
                     break;
@@ -340,7 +342,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
             if (flg) {
                 if ((startIndex + cnt) < s.length()) {
-                    if (ByteEncoder.isInExclusiveSubset(s.charAt(startIndex + cnt))) {
+                    if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex + cnt))) {
                         return EncodingMode.EIGHT_BIT_BYTE;
                     } else {
                         return EncodingMode.ALPHA_NUMERIC;
@@ -351,13 +353,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             } else {
                 return EncodingMode.ALPHA_NUMERIC;
             }
-        } else if (NumericEncoder.isInSubset(s.charAt(startIndex))) {
+        } else if (NumericEncoder.inSubset(s.charAt(startIndex))) {
             int cnt = 0;
             boolean flg1 = false;
             boolean flg2 = false;
 
             for (int i = startIndex; i < s.length(); i++) {
-                if (NumericEncoder.isInSubset(s.charAt(i))) {
+                if (NumericEncoder.inSubset(s.charAt(i))) {
                     cnt++;
                 } else {
                     break;
@@ -379,7 +381,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
             if (flg1) {
                 if ((startIndex + cnt) < s.length()) {
-                    flg1 = ByteEncoder.isInExclusiveSubset(s.charAt(startIndex + cnt));
+                    flg1 = ByteEncoder.inExclusiveSubset(s.charAt(startIndex + cnt));
                 } else {
                     flg1 = false;
                 }
@@ -387,7 +389,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
             if (flg2) {
                 if ((startIndex + cnt) < s.length()) {
-                    flg2 = AlphanumericEncoder.isInExclusiveSubset(s.charAt(startIndex + cnt));
+                    flg2 = AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex + cnt));
                 } else {
                     flg2 = false;
                 }
@@ -414,11 +416,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectModeWhileInNumericMode(String s, int startIndex) {
-        if (ByteEncoder.isInExclusiveSubset(s.charAt(startIndex))) {
+        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
-        } else if (KanjiEncoder.isInSubset(s.charAt(startIndex))) {
+        } else if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
-        } else if (AlphanumericEncoder.isInExclusiveSubset(s.charAt(startIndex))) {
+        } else if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.ALPHA_NUMERIC;
         } else {
             return EncodingMode.NUMERIC;
@@ -436,9 +438,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private EncodingMode selectModeWhileInAlphanumericMode(String s, int startIndex) {
         int version = _currSymbol.getVersion();
 
-        if (KanjiEncoder.isInSubset(s.charAt(startIndex))) {
+        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
-        } else if (ByteEncoder.isInExclusiveSubset(s.charAt(startIndex))) {
+        } else if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
@@ -446,11 +448,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         boolean flg = false;
 
         for (int i = startIndex; i < s.length(); i++) {
-            if (!AlphanumericEncoder.isInSubset(s.charAt(i))) {
+            if (!AlphanumericEncoder.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (NumericEncoder.isInSubset(s.charAt(i))) {
+            if (NumericEncoder.inSubset(s.charAt(i))) {
                 cnt++;
             } else {
                 flg = true;
@@ -491,18 +493,18 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         int cnt = 0;
         boolean flg = false;
 
-        if (KanjiEncoder.isInSubset(s.charAt(startIndex))) {
+        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
         }
 
         for (int i = startIndex; i < s.length(); i++) {
-            if (!ByteEncoder.isInSubset(s.charAt(i))) {
+            if (!ByteEncoder.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (NumericEncoder.isInSubset(s.charAt(i))) {
+            if (NumericEncoder.inSubset(s.charAt(i))) {
                 cnt++;
-            } else if (ByteEncoder.isInExclusiveSubset(s.charAt(i))) {
+            } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
                 flg = true;
                 break;
             } else {
@@ -530,13 +532,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         flg = false;
 
         for (int i = startIndex; i < s.length(); i++) {
-            if (!ByteEncoder.isInSubset(s.charAt(i))) {
+            if (!ByteEncoder.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (AlphanumericEncoder.isInExclusiveSubset(s.charAt(i))) {
+            if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
                 cnt++;
-            } else if (ByteEncoder.isInExclusiveSubset(s.charAt(i))) {
+            } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
                 flg = true;
                 break;
             } else {
@@ -570,24 +572,29 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *      パリティ計算対象の文字
      */
     void updateParity(char c) {
+        byte[] charBytes;
+        if (KanjiEncoder.inSubset(c)) {
+            charBytes = String.valueOf(c).getBytes(_shiftJISCharset);
+        }
+        else {
+            charBytes = String.valueOf(c).getBytes(_byteModeCharset);
+        }
 
-        byte[] charBytes = String.valueOf(c).getBytes(_byteModeCharset);
-
-        for (int i = 0; i < charBytes.length; i++) {
-            _structuredAppendParity ^= Byte.toUnsignedInt(charBytes[i]);
+        for (byte b : charBytes) {
+            _structuredAppendParity ^= Byte.toUnsignedInt(b);
         }
     }
 
-    private int curr = 0;
+    private int _curr = 0;
 
     @Override
     public boolean hasNext() {
-        return curr < _items.size();
+        return _curr < _items.size();
     }
 
     @Override
     public Symbol next() {
-        return _items.get(curr++);
+        return _items.get(_curr++);
     }
 
     @Override

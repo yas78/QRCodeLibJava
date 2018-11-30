@@ -40,7 +40,7 @@ public class KanjiEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
@@ -68,7 +68,7 @@ public class KanjiEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert isInSubset(c);
+        assert inSubset(c);
 
         return 13;
     }
@@ -90,7 +90,7 @@ public class KanjiEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInSubset(char c) {
+    public static boolean inSubset(char c) {
 
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
@@ -113,7 +113,7 @@ public class KanjiEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean isInExclusiveSubset(char c) {
-        return isInSubset(c);
+    public static boolean inExclusiveSubset(char c) {
+        return inSubset(c);
     }
 }
