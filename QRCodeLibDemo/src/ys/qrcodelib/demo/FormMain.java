@@ -62,7 +62,7 @@ public class FormMain extends JFrame {
         Symbols symbols = new Symbols(ecLevel, version, allowStructuredAppend, charset.name());
 
         try {
-            symbols.appendString(txtData.getText());
+            symbols.appendText(txtData.getText());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
             return;
@@ -115,7 +115,7 @@ public class FormMain extends JFrame {
                 Symbols symbols = new Symbols(ecLevel, version, allowStructuredAppend, charset.name());
 
                 try {
-                    symbols.appendString(txtData.getText());
+                    symbols.appendText(txtData.getText());
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, ex.getMessage());
                     return;

@@ -249,7 +249,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     /**
      * 文字列を追加します。
      */
-    public void appendString(String s) {
+    public void appendText(String s) {
         if (s == null || s.isEmpty()) {
             throw new IllegalArgumentException("s");
         }

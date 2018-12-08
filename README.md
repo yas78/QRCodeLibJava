@@ -26,7 +26,7 @@ import ys.qrcode.Symbol;
 
 public void Example() {
     Symbols symbols = new Symbols();
-    symbols.appendString("012345abcdefg");
+    symbols.appendText("012345abcdefg");
 
     Image image = symbols.get(0).get24bppImage();
 }
@@ -65,7 +65,7 @@ Symbols symbols = new Symbols(true);
 
 ```java
 Symbols symbols = new Symbols(1, true);
-symbols.appendString("abcdefghijklmnopqrstuvwxyz");
+symbols.appendText("abcdefghijklmnopqrstuvwxyz");
 
 for (Symbol symbol : symbols) {
     Image image = symbol.get24bppImage();
@@ -77,7 +77,7 @@ SymbolクラスのSave1bppDIB、またはSave24bppDIBメソッドを使用しま
 
 ```java
 Symbols symbols = new Symbols();
-symbols.appendString("012345abcdefg");
+symbols.appendText("012345abcdefg");
 Symbol symbol = symbols.get(0);
 
 symbol.save1bppDIB("D:\\qrcode1bpp1.bmp");
@@ -98,7 +98,7 @@ import ys.qrcode.Symbols;
 
 public void Example() {
     Symbols symbols = new Symbols();
-    symbols.appendString("012345abcdefg");
+    symbols.appendText("012345abcdefg");
 
     BufferedImage image = symbols.get(0).get24bppImage();
 

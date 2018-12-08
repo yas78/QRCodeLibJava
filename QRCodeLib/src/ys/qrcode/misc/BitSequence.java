@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BitSequence {
-    private final List<Byte> _buffer = new ArrayList<Byte>();
+    private List<Byte> _buffer;
 
-    private int _bitCounter = 0;
-    private int _space      = 0;
+    private int _bitCounter;
+    private int _space;
 
     public BitSequence() {
+        clear();
     }
 
     /**
@@ -17,6 +18,13 @@ public class BitSequence {
      */
     public int getLength() {
         return _bitCounter;
+    }
+
+    public void clear()
+    {
+        _buffer = new ArrayList<Byte>();
+        _bitCounter = 0;
+        _space      = 0;
     }
 
     /**

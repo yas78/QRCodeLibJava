@@ -11,9 +11,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import ys.image.BITMAPFILEHEADER;
-import ys.image.BITMAPINFOHEADER;
-import ys.image.RGBQUAD;
 import ys.qrcode.encoder.QRCodeEncoder;
 import ys.qrcode.format.CharCountIndicator;
 import ys.qrcode.format.Codeword;
@@ -25,6 +22,7 @@ import ys.qrcode.format.StructuredAppend;
 import ys.qrcode.format.SymbolSequenceIndicator;
 import ys.qrcode.misc.BitSequence;
 import ys.qrcode.misc.ColorCode;
+import ys.qrcode.misc.DIB;
 
 /**
  * シンボルを表します。
@@ -533,91 +531,49 @@ public class Symbol {
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
-        int width   = moduleSize * moduleMatrix.length;
-        int height  = width;
+        int width, height;
+        width = height = moduleSize * moduleMatrix.length;
 
-        int hByteLen = (width + 7) / 8;
+        int rowBytesLen = (width + 7) / 8;
 
         int pack8bit = 0;
-        if (width % 8 > 0)
+        if (width % 8 > 0) {
             pack8bit = 8 - (width % 8);
+        }
 
         int pack32bit = 0;
-        if (hByteLen % 4 > 0)
-            pack32bit = 8 * (4 - (hByteLen % 4));
+        if (rowBytesLen % 4 > 0) {
+            pack32bit = 8 * (4 - (rowBytesLen % 4));
+        }
+
+        int rowSize = (width + pack8bit + pack32bit) / 8;
+        byte[] bitmapData = new byte[rowSize * height];
+        int offset = 0;
 
         BitSequence bs = new BitSequence();
 
         for (int r = moduleMatrix.length - 1; r >= 0; r--) {
-            for (int i = 1; i <= moduleSize; i++) {
-                for (int c = 0; c < moduleMatrix[r].length; c++) {
-                    for (int j = 1; j <= moduleSize; j++) {
-                        bs.append(moduleMatrix[r][c] > 0 ? 0 : 1, 1);
-                    }
-                }
+            bs.clear();
 
-                bs.append(0, pack8bit);
-                bs.append(0, pack32bit);
+            for (int c = 0; c < moduleMatrix[r].length; c++) {
+                int color = moduleMatrix[r][c] > 0 ? 0 : 1;
+
+                for (int i = 1; i <= moduleSize; i++) {
+                    bs.append(color, 1);
+                }
+            }
+            bs.append(0, pack8bit);
+            bs.append(0, pack32bit);
+
+            byte[] bitmapRow = bs.getBytes();
+
+            for (int i = 1; i <= moduleSize; i++) {
+                System.arraycopy(bitmapRow, 0, bitmapData, offset, rowSize);
+                offset += rowSize;
             }
         }
 
-        byte[] dataBlock = bs.getBytes();
-
-        BITMAPFILEHEADER bfh = new BITMAPFILEHEADER();
-        bfh.bfType          = 0x4D42;
-        bfh.bfSize          = 62 + dataBlock.length;
-        bfh.bfReserved1     = 0;
-        bfh.bfReserved2     = 0;
-        bfh.bfOffBits       = 62;
-
-        BITMAPINFOHEADER bih = new BITMAPINFOHEADER();
-        bih.biSize          = 40;
-        bih.biWidth         = width;
-        bih.biHeight        = height;
-        bih.biPlanes        = 1;
-        bih.biBitCount      = 1;
-        bih.biCompression   = 0;
-        bih.biSizeImage     = 0;
-        bih.biXPelsPerMeter = 3780; // 96dpi
-        bih.biYPelsPerMeter = 3780; // 96dpi
-        bih.biClrUsed       = 0;
-        bih.biClrImportant  = 0;
-
-        RGBQUAD[] palette = new RGBQUAD[] { new RGBQUAD(), new RGBQUAD() };
-
-        palette[0].rgbBlue      = (byte) foreColor.getBlue();
-        palette[0].rgbGreen     = (byte) foreColor.getGreen();
-        palette[0].rgbRed       = (byte) foreColor.getRed();
-        palette[0].rgbReserved  = 0;
-
-        palette[1].rgbBlue      = (byte) backColor.getBlue();
-        palette[1].rgbGreen     = (byte) backColor.getGreen();
-        palette[1].rgbRed       = (byte) backColor.getRed();
-        palette[1].rgbReserved  = 0;
-
-        byte[] ret = new byte[62 + dataBlock.length];
-
-        byte[] bytes;
-        int offset = 0;
-
-        bytes = bfh.getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = bih.getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = palette[0].getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = palette[1].getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = dataBlock;
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
+        byte[] ret = DIB.build1bppDIB(bitmapData, width, height, foreColor, backColor);
 
         return ret;
     }
@@ -663,69 +619,41 @@ public class Symbol {
 
         int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
 
-        int width  = moduleSize * moduleMatrix.length;
-        int height = width;
+        int width, height;
+        width = height  = moduleSize * moduleMatrix.length;
 
-        int hByteLen = 3 * width;
+        int rowBytesLen = 3 * width;
 
         int pack4byte = 0;
-        if (hByteLen % 4 > 0)
-            pack4byte = 4 - (hByteLen % 4);
+        if (rowBytesLen % 4 > 0)
+            pack4byte = 4 - (rowBytesLen % 4);
 
-        byte[] dataBlock = new byte[(hByteLen + pack4byte) * height];
-
-        int idx = 0;
+        int rowSize = rowBytesLen + pack4byte;
+        byte[] bitmapData = new byte[rowSize * height];
+        int offset = 0;
 
         for (int r = moduleMatrix.length - 1; r >= 0; r--) {
-            for (int i = 1; i <= moduleSize; i++) {
-                for (int c = 0; c < moduleMatrix[r].length; c++) {
-                    for (int j = 1; j <= moduleSize; j++) {
-                        Color color = moduleMatrix[r][c] > 0 ? foreColor : backColor;
-                        dataBlock[idx++] = (byte) color.getBlue();
-                        dataBlock[idx++] = (byte) color.getGreen();
-                        dataBlock[idx++] = (byte) color.getRed();
-                    }
-                }
+            byte[] bitmapRow = new byte[rowSize];
+            int idx = 0;
 
-                idx += pack4byte;
+            for (int c = 0; c < moduleMatrix[r].length; c++) {
+                Color color = moduleMatrix[r][c] > 0 ? foreColor : backColor;
+
+                for (int i = 1; i <= moduleSize; i++) {
+
+                    bitmapRow[idx++] = (byte) color.getBlue();
+                    bitmapRow[idx++] = (byte) color.getGreen();
+                    bitmapRow[idx++] = (byte) color.getRed();
+                }
+            }
+
+            for (int i = 1; i <= moduleSize; i++) {
+                System.arraycopy(bitmapRow, 0, bitmapData, offset, rowSize);
+                offset += rowSize;
             }
         }
 
-        BITMAPFILEHEADER bfh = new BITMAPFILEHEADER();
-        bfh.bfType      = 0x4D42;
-        bfh.bfSize      = 54 + dataBlock.length;
-        bfh.bfReserved1 = 0;
-        bfh.bfReserved2 = 0;
-        bfh.bfOffBits   = 54;
-
-        BITMAPINFOHEADER bih = new BITMAPINFOHEADER();
-        bih.biSize          = 40;
-        bih.biWidth         = width;
-        bih.biHeight        = height;
-        bih.biPlanes        = 1;
-        bih.biBitCount      = 24;
-        bih.biCompression   = 0;
-        bih.biSizeImage     = 0;
-        bih.biXPelsPerMeter = 3780; // 96dpi
-        bih.biYPelsPerMeter = 3780; // 96dpi
-        bih.biClrUsed       = 0;
-        bih.biClrImportant  = 0;
-
-        byte[] ret = new byte[54 + dataBlock.length];
-
-        byte[] bytes;
-        int offset = 0;
-
-        bytes = bfh.getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = bih.getBytes();
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
-        offset += bytes.length;
-
-        bytes = dataBlock;
-        System.arraycopy(bytes, 0, ret, offset, bytes.length);
+        byte[] ret = DIB.build24bppDIB(bitmapData, width, height);
 
         return ret;
     }
