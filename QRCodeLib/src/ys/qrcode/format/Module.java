@@ -13,8 +13,7 @@ public class Module {
      *            型番
      */
     public static int getNumModulesPerSide(int version) {
-        assert version >= Constants.MIN_VERSION &&
-               version <= Constants.MAX_VERSION;
+        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
 
         return 17 + version * 4;
     }

@@ -8,7 +8,7 @@ class VersionInfo {
      * 型番情報を配置します。
      */
     public static void place(int[][] moduleMatrix, int version) {
-        assert version >= 7 && version <= 40;
+        assert 7 <= version && version <= 40;
 
         int numModulesPerSide = moduleMatrix.length;
 

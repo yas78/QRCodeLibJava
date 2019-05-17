@@ -17,7 +17,11 @@ class QuietZone {
         }
 
         for (int i = 0; i < moduleMatrix.length; i++) {
-            System.arraycopy(moduleMatrix[i], 0, ret[i + QUIET_ZONE_WIDTH], QUIET_ZONE_WIDTH, moduleMatrix[i].length);
+            System.arraycopy(moduleMatrix[i],
+                             0,
+                             ret[i + QUIET_ZONE_WIDTH],
+                             QUIET_ZONE_WIDTH,
+                             moduleMatrix[i].length);
         }
 
         return ret;

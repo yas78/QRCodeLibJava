@@ -15,7 +15,7 @@ public class CharCountIndicator {
      *            符号化モード
      */
     public static int getLength(int version, EncodingMode encMode) {
-        if (version >= 1 && version <= 9) {
+        if (1 <= version && version <= 9) {
             switch (encMode) {
             case NUMERIC:
                 return 10;
@@ -28,8 +28,9 @@ public class CharCountIndicator {
             default:
                 throw new IllegalArgumentException("encMode");
             }
+        }
 
-        } else if (version >= 10 && version <= 26) {
+        if (10 <= version && version <= 26) {
             switch (encMode) {
             case NUMERIC:
                 return 12;
@@ -42,8 +43,9 @@ public class CharCountIndicator {
             default:
                 throw new IllegalArgumentException("encMode");
             }
+        }
 
-        } else if (version >= 27 && version <= 40) {
+        if (27 <= version && version <= 40) {
             switch (encMode) {
             case NUMERIC:
                 return 14;
@@ -56,9 +58,8 @@ public class CharCountIndicator {
             default:
                 throw new IllegalArgumentException("encMode");
             }
-
-        } else {
-            throw new IllegalArgumentException("version");
         }
+
+        throw new IllegalArgumentException("version");
     }
 }

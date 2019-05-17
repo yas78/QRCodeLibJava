@@ -5,7 +5,7 @@ class AlignmentPattern {
      * 位置合わせパターンを配置します。
      */
     public static void place(int[][] moduleMatrix, int version) {
-        assert version >= 2 && version <= 40;
+        assert 2 <= version && version <= 40;
 
         int[] centerPosArray = _centerPosArrays[version];
 

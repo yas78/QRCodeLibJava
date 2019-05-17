@@ -102,11 +102,11 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      */
     private static int convertCharCode(char c) {
 
-        if (c >= 'A' && c <= 'Z') {
+        if ('A' <= c && c <= 'Z') {
             return c - 55;
         }
 
-        if (c >= '0' && c <= '9') {
+        if ('0' <= c && c <= '9') {
             return c - 48;
         }
 
@@ -141,8 +141,8 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
     public static boolean inSubset(char c) {
-        return c >= 'A' && c <= 'Z' ||
-               c >= '0' && c <= '9' ||
+        return 'A' <= c && c <= 'Z' ||
+               '0' <= c && c <= '9' ||
                c == ' '             ||
                c == '.'             ||
                c == '-'             ||

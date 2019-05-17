@@ -19,8 +19,7 @@ public class RSBlock {
      */
     public static int getTotalNumber(
         ErrorCorrectionLevel ecLevel, int version, boolean preceding) {
-        assert version >= Constants.MIN_VERSION &&
-               version <= Constants.MAX_VERSION;
+        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
 
         int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
         int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
@@ -46,8 +45,7 @@ public class RSBlock {
      */
     public static int getNumberDataCodewords(
         ErrorCorrectionLevel ecLevel, int version, boolean preceding) {
-        assert version >= Constants.MIN_VERSION &&
-               version <= Constants.MAX_VERSION;
+        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
 
         int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
         int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
@@ -77,8 +75,7 @@ public class RSBlock {
      *            型番
      */
     public static int getNumberECCodewords(ErrorCorrectionLevel ecLevel, int version) {
-        assert version >= Constants.MIN_VERSION &&
-               version <= Constants.MAX_VERSION;
+        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
 
         int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
         int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];

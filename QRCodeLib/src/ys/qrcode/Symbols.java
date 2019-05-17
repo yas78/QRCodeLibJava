@@ -149,8 +149,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
                    int maxVersion,
                    boolean allowStructuredAppend,
                    String byteModeCharset) {
-        if (maxVersion < Constants.MIN_VERSION ||
-            maxVersion > Constants.MAX_VERSION) {
+        if (!(Constants.MIN_VERSION <= maxVersion && maxVersion <= Constants.MAX_VERSION)) {
             throw new IllegalArgumentException("maxVersion");
         }
 
@@ -316,9 +315,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
-        } else if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        }
+
+        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
-        } else if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        }
+
+        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             int cnt = 0;
             boolean flg = false;
 
@@ -330,11 +333,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
                 }
             }
 
-            if (version >= 1 && version <= 9) {
+            if (1 <= version && version <= 9) {
                 flg = cnt < 6;
-            } else if (version >= 10 && version <= 26) {
+            } else if (10 <= version && version <= 26) {
                 flg = cnt < 7;
-            } else if (version >= 27 && version <= 40) {
+            } else if (27 <= version && version <= 40) {
                 flg = cnt < 8;
             } else {
                 throw new InternalError();
@@ -353,7 +356,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             } else {
                 return EncodingMode.ALPHA_NUMERIC;
             }
-        } else if (NumericEncoder.inSubset(s.charAt(startIndex))) {
+        }
+
+        if (NumericEncoder.inSubset(s.charAt(startIndex))) {
             int cnt = 0;
             boolean flg1 = false;
             boolean flg2 = false;
@@ -366,13 +371,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
                 }
             }
 
-            if (version >= 1 && version <= 9) {
+            if (1 <= version && version <= 9) {
                 flg1 = cnt < 4;
                 flg2 = cnt < 7;
-            } else if (version >= 10 && version <= 26) {
+            } else if (10 <= version && version <= 26) {
                 flg1 = cnt < 4;
                 flg2 = cnt < 8;
-            } else if (version >= 27 && version <= 40) {
+            } else if (27 <= version && version <= 40) {
                 flg1 = cnt < 5;
                 flg2 = cnt < 9;
             } else {
@@ -402,9 +407,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             } else {
                 return EncodingMode.NUMERIC;
             }
-        } else {
-            throw new InternalError();
         }
+
+        throw new InternalError();
     }
 
     /**
@@ -418,13 +423,17 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private EncodingMode selectModeWhileInNumericMode(String s, int startIndex) {
         if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
-        } else if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
-            return EncodingMode.KANJI;
-        } else if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
-            return EncodingMode.ALPHA_NUMERIC;
-        } else {
-            return EncodingMode.NUMERIC;
         }
+
+        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
+            return EncodingMode.KANJI;
+        }
+
+        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+            return EncodingMode.ALPHA_NUMERIC;
+        }
+
+        return EncodingMode.NUMERIC;
     }
 
     /**
@@ -440,7 +449,9 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
-        } else if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        }
+
+        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
@@ -461,11 +472,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         }
 
         if (flg) {
-            if (version >= 1 && version <= 9) {
+            if (1 <= version && version <= 9) {
                 flg = cnt >= 13;
-            } else if (version >= 10 && version <= 26) {
+            } else if (10 <= version && version <= 26) {
                 flg = cnt >= 15;
-            } else if (version >= 27 && version <= 40) {
+            } else if (27 <= version && version <= 40) {
                 flg = cnt >= 17;
             } else {
                 throw new InternalError();
@@ -513,11 +524,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         }
 
         if (flg) {
-            if (version >= 1 && version <= 9) {
+            if (1 <= version && version <= 9) {
                 flg = cnt >= 6;
-            } else if (version >= 10 && version <= 26) {
+            } else if (10 <= version && version <= 26) {
                 flg = cnt >= 8;
-            } else if (version >= 27 && version <= 40) {
+            } else if (27 <= version && version <= 40) {
                 flg = cnt >= 9;
             } else {
                 throw new InternalError();
@@ -547,11 +558,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         }
 
         if (flg) {
-            if (version >= 1 && version <= 9) {
+            if (1 <= version && version <= 9) {
                 flg = cnt >= 11;
-            } else if (version >= 10 && version <= 26) {
+            } else if (10 <= version && version <= 26) {
                 flg = cnt >= 15;
-            } else if (version >= 27 && version <= 40) {
+            } else if (27 <= version && version <= 40) {
                 flg = cnt >= 16;
             } else {
                 throw new InternalError();

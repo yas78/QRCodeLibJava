@@ -76,7 +76,7 @@ class Masking {
      */
     private static void mask(int[][] moduleMatrix, int maskPatternReference) {
 
-        assert maskPatternReference >= 0 && maskPatternReference <= 7;
+        assert 0 <= maskPatternReference && maskPatternReference <= 7;
 
         BiPredicate<Integer, Integer> condition = getCondition(maskPatternReference);
 

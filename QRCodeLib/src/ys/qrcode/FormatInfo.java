@@ -17,7 +17,7 @@ class FormatInfo {
     public static void place(int[][] moduleMatrix,
                              ErrorCorrectionLevel ecLevel,
                              int maskPatternReference) {
-        assert maskPatternReference >= 0 && maskPatternReference <= 7;
+        assert 0 <= maskPatternReference && maskPatternReference <= 7;
 
         int formatInfo = getFormatInfoValue(ecLevel, maskPatternReference);
 
@@ -91,7 +91,7 @@ class FormatInfo {
      *      maskPatternReference マスクパターン参照子
      */
     public static int getFormatInfoValue(ErrorCorrectionLevel ecLevel, int maskPatternReference) {
-        assert maskPatternReference >= 0 && maskPatternReference <= 7;
+        assert 0 <= maskPatternReference && maskPatternReference <= 7;
 
         int indicator;
 

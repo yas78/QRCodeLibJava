@@ -241,7 +241,7 @@ public class Symbol {
             int eccIndex = data.length - 1;
 
             for (int i = 0; i < dataBlock[blockIndex].length; i++) {
-                data[eccIndex] = Byte.toUnsignedInt(dataBlock[blockIndex][i]);// & 0xFF;
+                data[eccIndex] = Byte.toUnsignedInt(dataBlock[blockIndex][i]);
                 eccIndex--;
             }
 
@@ -640,7 +640,6 @@ public class Symbol {
                 Color color = moduleMatrix[r][c] > 0 ? foreColor : backColor;
 
                 for (int i = 1; i <= moduleSize; i++) {
-
                     bitmapRow[idx++] = (byte) color.getBlue();
                     bitmapRow[idx++] = (byte) color.getGreen();
                     bitmapRow[idx++] = (byte) color.getRed();

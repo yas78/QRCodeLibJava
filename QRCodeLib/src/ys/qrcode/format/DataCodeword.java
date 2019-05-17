@@ -16,8 +16,7 @@ public class DataCodeword {
      *            型番
      */
     public static int getTotalNumber(ErrorCorrectionLevel ecLevel, int version) {
-        assert version >= Constants.MIN_VERSION &&
-               version <= Constants.MAX_VERSION;
+        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
 
         return _totalNumbers[ecLevel.toInt()][version];
     }

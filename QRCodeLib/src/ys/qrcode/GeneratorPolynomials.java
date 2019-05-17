@@ -39,10 +39,6 @@ class GeneratorPolynomials {
     }
 
     public static int[] get(int numECCodeWords) {
-        if (numECCodeWords < 7 || numECCodeWords > 68) {
-            throw new java.lang.IllegalArgumentException("(numECCodeWords");
-        }
-
         return _gp[numECCodeWords];
     }
 }
