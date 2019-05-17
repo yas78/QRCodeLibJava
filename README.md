@@ -95,6 +95,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import ys.qrcode.Symbols;
+import ys.qrcode.Symbol;
 
 public void Example() {
     Symbols symbols = new Symbols();
