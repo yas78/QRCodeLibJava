@@ -117,58 +117,63 @@ class MaskingPenaltyScore {
     private static int calcModuleRatioInRow(int[][] moduleMatrix) {
         int penalty = 0;
 
-        for (int r = 0; r < moduleMatrix.length - 4; r++) {
-            int[] columns = moduleMatrix[r];
-            List<Integer> startIndexes = new ArrayList<Integer>();
+        for (int[] row : moduleMatrix) {
+            List<int[]> ratio3Ranges = GetRatio3Ranges(row);
 
-            startIndexes.add(0);
+            for (int[] rng : ratio3Ranges) {
+                int ratio3 = rng[1] + 1 - rng[0];
+                int ratio1 = ratio3 / 3;
+                int ratio4 = ratio1 * 4;
+                boolean impose = false;
+                int cnt;
 
-            for (int c = 4; c < columns.length - 2; c++) {
-                if (columns[c] > 0 && columns[c + 1] <= 0) {
-                    startIndexes.add(c + 1);
-                }
-            }
+                int i = rng[0] - 1;
 
-            for (int i = 0; i < startIndexes.size(); i++) {
-                int index = startIndexes.get(i);
-                ModuleRatio moduleRatio = new ModuleRatio();
+                // light ratio 1
+                for (cnt = 0; i >= 0 && row[i] <= 0; cnt++, i--);
 
-                while (index < columns.length && columns[index] <= 0) {
-                    moduleRatio.PreLightRatio4++;
-                    index++;
+                if (cnt != ratio1) {
+                    continue;
                 }
 
-                while (index < columns.length && columns[index] > 0) {
-                    moduleRatio.PreDarkRatio1++;
-                    index++;
+                // dark ratio 1
+                for (cnt = 0; i >= 0 && row[i] > 0; ++cnt, i--);
+
+                if (cnt != ratio1) {
+                    continue;
                 }
 
-                while (index < columns.length && columns[index] <= 0) {
-                    moduleRatio.PreLightRatio1++;
-                    index++;
+                // light ratio 4
+                for (cnt = 0; i >= 0 && row[i] <= 0; cnt++, i--);
+
+                if (cnt >= ratio4) {
+                    impose = true;
                 }
 
-                while (index < columns.length && columns[index] > 0) {
-                    moduleRatio.CenterDarkRatio3++;
-                    index++;
+                i = rng[1] + 1;
+
+                // light ratio 1
+                for (cnt = 0; i <= row.length - 1 && row[i] <= 0; cnt++, i++);
+
+                if (cnt != ratio1) {
+                    continue;
                 }
 
-                while (index < columns.length && columns[index] <= 0) {
-                    moduleRatio.FolLightRatio1++;
-                    index++;
+                // dark ratio 1
+                for (cnt = 0; i <= row.length - 1 && row[i] > 0; cnt++, i++);
+
+                if (cnt != ratio1) {
+                    continue;
                 }
 
-                while (index < columns.length && columns[index] > 0) {
-                    moduleRatio.FolDarkRatio1++;
-                    index++;
+                // light ratio 4
+                for (cnt = 0; i <= row.length - 1 && row[i] <= 0; cnt++, i++);
+
+                if (cnt >= ratio4) {
+                    impose = true;
                 }
 
-                while (index < columns.length && columns[index] <= 0) {
-                    moduleRatio.FolLightRatio4++;
-                    index++;
-                }
-
-                if (moduleRatio.penaltyImposed()) {
+                if (impose) {
                     penalty += 40;
                 }
             }
@@ -177,6 +182,29 @@ class MaskingPenaltyScore {
         return penalty;
     }
 
+
+    private static List<int[]> GetRatio3Ranges(int[] arg)
+    {
+        List<int[]> ret = new ArrayList<int[]>();
+        int s = 0;
+        int e;
+
+        for (int i = 4; i < arg.length - 4; i++) {
+            if (arg[i] > 0 && arg[i - 1] <= 0) {
+                s = i;
+            }
+
+            if (arg[i] > 0 && arg[i + 1] <= 0) {
+                e = i;
+
+                if ((e + 1 - s) % 3 == 0) {
+                    ret.add(new int[] { s, e });
+                }
+            }
+        }
+
+        return ret;
+    }
     /**
      * 全体に対する暗モジュールの占める割合について失点を計算します。
      */
