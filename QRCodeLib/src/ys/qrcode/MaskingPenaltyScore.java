@@ -118,7 +118,7 @@ class MaskingPenaltyScore {
         int penalty = 0;
 
         for (int[] row : moduleMatrix) {
-            List<int[]> ratio3Ranges = GetRatio3Ranges(row);
+            List<int[]> ratio3Ranges = getRatio3Ranges(row);
 
             for (int[] rng : ratio3Ranges) {
                 int ratio3 = rng[1] + 1 - rng[0];
@@ -183,7 +183,7 @@ class MaskingPenaltyScore {
     }
 
 
-    private static List<int[]> GetRatio3Ranges(int[] arg)
+    private static List<int[]> getRatio3Ranges(int[] arg)
     {
         List<int[]> ret = new ArrayList<int[]>();
         int s = 0;
