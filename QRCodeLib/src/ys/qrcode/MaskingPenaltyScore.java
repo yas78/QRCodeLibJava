@@ -213,8 +213,9 @@ class MaskingPenaltyScore {
 
         for (int[] columns : moduleMatrix) {
             for (int value : columns) {
-                if (value > 0)
+                if (value > 0) {
                     darkCount++;
+                }
             }
         }
 
