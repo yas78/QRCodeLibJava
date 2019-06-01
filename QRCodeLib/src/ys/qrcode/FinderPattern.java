@@ -4,6 +4,17 @@ package ys.qrcode;
  * 位置検出パターン
  */
 class FinderPattern {
+    // 位置検出パターン
+    private static int[][] _finderPattern = {
+        new int[] {2,  2,  2,  2,  2,  2,  2},
+        new int[] {2, -2, -2, -2, -2, -2,  2},
+        new int[] {2, -2,  2,  2,  2, -2,  2},
+        new int[] {2, -2,  2,  2,  2, -2,  2},
+        new int[] {2, -2,  2,  2,  2, -2,  2},
+        new int[] {2, -2, -2, -2, -2, -2,  2},
+        new int[] {2,  2 , 2,  2,  2,  2,  2}
+    };
+
     /**
      * 位置検出パターンを配置します。
      */
@@ -20,15 +31,4 @@ class FinderPattern {
             }
         }
     }
-
-    // 位置検出パターン
-    private static int[][] _finderPattern = {
-        new int[] {2,  2,  2,  2,  2,  2,  2},
-        new int[] {2, -2, -2, -2, -2, -2,  2},
-        new int[] {2, -2,  2,  2,  2, -2,  2},
-        new int[] {2, -2,  2,  2,  2, -2,  2},
-        new int[] {2, -2,  2,  2,  2, -2,  2},
-        new int[] {2, -2, -2, -2, -2, -2,  2},
-        new int[] {2,  2 , 2,  2,  2,  2,  2}
-    };
 }

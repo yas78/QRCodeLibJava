@@ -49,12 +49,11 @@ class MaskingPenaltyScore {
     private static int calcAdjacentModulesInRowInSameColor(int[][] moduleMatrix) {
         int penalty = 0;
 
-        for (int r = 0; r < moduleMatrix.length; r++) {
-            int[] columns = moduleMatrix[r];
+        for (int[] row : moduleMatrix) {
             int cnt = 1;
 
-            for (int c = 0; c < columns.length - 1; c++) {
-                if ((columns[c] > 0) == (columns[c + 1] > 0)) {
+            for (int i = 0; i < row.length - 1; i++) {
+                if ((row[i] > 0) == (row[i + 1] > 0)) {
                     cnt++;
                 } else {
                     if (cnt >= 5) {
@@ -118,7 +117,7 @@ class MaskingPenaltyScore {
         int penalty = 0;
 
         for (int[] row : moduleMatrix) {
-            List<int[]> ratio3Ranges = getRatio3Ranges(row);
+            int[][] ratio3Ranges = getRatio3Ranges(row);
 
             for (int[] rng : ratio3Ranges) {
                 int ratio3 = rng[1] + 1 - rng[0];
@@ -137,7 +136,7 @@ class MaskingPenaltyScore {
                 }
 
                 // dark ratio 1
-                for (cnt = 0; i >= 0 && row[i] > 0; ++cnt, i--);
+                for (cnt = 0; i >= 0 && row[i] > 0; cnt++, i--);
 
                 if (cnt != ratio1) {
                     continue;
@@ -183,13 +182,12 @@ class MaskingPenaltyScore {
     }
 
 
-    private static List<int[]> getRatio3Ranges(int[] arg)
-    {
+    private static int[][] getRatio3Ranges(int[] arg) {
         List<int[]> ret = new ArrayList<int[]>();
         int s = 0;
         int e;
 
-        for (int i = 4; i < arg.length - 4; i++) {
+        for (int i = QuietZone.WIDTH; i < arg.length - QuietZone.WIDTH; i++) {
             if (arg[i] > 0 && arg[i - 1] <= 0) {
                 s = i;
             }
@@ -203,7 +201,7 @@ class MaskingPenaltyScore {
             }
         }
 
-        return ret;
+        return ret.toArray(new int[ret.size()][2]);
     }
     /**
      * 全体に対する暗モジュールの占める割合について失点を計算します。
@@ -211,8 +209,8 @@ class MaskingPenaltyScore {
     private static int calcProportionOfDarkModules(int[][] moduleMatrix) {
         int darkCount = 0;
 
-        for (int[] columns : moduleMatrix) {
-            for (int value : columns) {
+        for (int[] row : moduleMatrix) {
+            for (int value : row) {
                 if (value > 0) {
                     darkCount++;
                 }

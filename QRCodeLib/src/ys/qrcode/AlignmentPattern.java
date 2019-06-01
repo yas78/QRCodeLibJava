@@ -1,39 +1,6 @@
 package ys.qrcode;
 
 class AlignmentPattern {
-    /**
-     * 位置合わせパターンを配置します。
-     */
-    public static void place(int[][] moduleMatrix, int version) {
-        assert 2 <= version && version <= 40;
-
-        int[] centerPosArray = _centerPosArrays[version];
-
-        int maxIndex = centerPosArray.length - 1;
-
-        for (int i = 0; i <= maxIndex; i++) {
-            int r = centerPosArray[i];
-
-            for (int j = 0; j <= maxIndex; j++) {
-                int c = centerPosArray[j];
-
-                // 位置検出パターンと重なる場合
-                if (i == 0        && j == 0        ||
-                    i == 0        && j == maxIndex ||
-                    i == maxIndex && j == 0) {
-
-                    continue;
-                }
-
-                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r - 2], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r - 1], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2,  2, -2,  2 }, 0, moduleMatrix[r + 0], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r + 1], c - 2, 5);
-                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r + 2], c - 2, 5);
-            }
-        }
-    }
-
     // 位置合せパターンの中心座標
     private static final int[][] _centerPosArrays = {
         null,
@@ -78,4 +45,35 @@ class AlignmentPattern {
         new int[]{6, 26, 54, 82, 110, 138, 166},
         new int[]{6, 30, 58, 86, 114, 142, 170}
     };
+
+    /**
+     * 位置合わせパターンを配置します。
+     */
+    public static void place(int[][] moduleMatrix, int version) {
+        int[] centerPosArray = _centerPosArrays[version];
+
+        int maxIndex = centerPosArray.length - 1;
+
+        for (int i = 0; i <= maxIndex; i++) {
+            int r = centerPosArray[i];
+
+            for (int j = 0; j <= maxIndex; j++) {
+                int c = centerPosArray[j];
+
+                // 位置検出パターンと重なる場合
+                if (i == 0        && j == 0        ||
+                    i == 0        && j == maxIndex ||
+                    i == maxIndex && j == 0) {
+
+                    continue;
+                }
+
+                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r - 2], c - 2, 5);
+                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r - 1], c - 2, 5);
+                System.arraycopy(new int[] { 2, -2,  2, -2,  2 }, 0, moduleMatrix[r + 0], c - 2, 5);
+                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r + 1], c - 2, 5);
+                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r + 2], c - 2, 5);
+            }
+        }
+    }
 }

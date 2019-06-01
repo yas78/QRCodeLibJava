@@ -1,7 +1,6 @@
 package ys.qrcode.misc;
 
 public class BitConverter {
-
     public static byte[] getBytes(short value) {
         byte[] temp = new byte[2];
         temp[0] = (byte) ((value & 0xFF));
@@ -19,5 +18,4 @@ public class BitConverter {
 
         return temp;
     }
-
 }

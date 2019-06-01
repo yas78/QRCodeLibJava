@@ -1,26 +1,11 @@
 package ys.qrcode.format;
 
-import ys.qrcode.Constants;
 import ys.qrcode.ErrorCorrectionLevel;
 
 /**
  * データコード語
  */
 public class DataCodeword {
-    /**
-     * データコード語数を返します。
-     *
-     * @param ecLevel
-     *            誤り訂正レベル
-     * @param version
-     *            型番
-     */
-    public static int getTotalNumber(ErrorCorrectionLevel ecLevel, int version) {
-        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
-
-        return _totalNumbers[ecLevel.toInt()][version];
-    }
-
     // データコード語数
     private static final int[][] _totalNumbers = {
         /* Error Correction Level L */
@@ -56,4 +41,16 @@ public class DataCodeword {
              793,  845,  901,  961,  986, 1054, 1096, 1142, 1222, 1276
         }
     };
+
+    /**
+     * データコード語数を返します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param version
+     *            型番
+     */
+    public static int getTotalNumber(ErrorCorrectionLevel ecLevel, int version) {
+        return _totalNumbers[ecLevel.toInt()][version];
+    }
 }

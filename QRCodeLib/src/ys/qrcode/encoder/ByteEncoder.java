@@ -51,8 +51,6 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert inSubset(c);
-
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
         int ret = 0;
 
@@ -71,8 +69,6 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert inSubset(c);
-
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
         return 8 * charBytes.length;

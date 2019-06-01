@@ -40,8 +40,6 @@ public class KanjiEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert inSubset(c);
-
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
         int wd = (Byte.toUnsignedInt(charBytes[0]) << 8) | Byte.toUnsignedInt(charBytes[1]);
@@ -68,8 +66,6 @@ public class KanjiEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert inSubset(c);
-
         return 13;
     }
 
@@ -80,8 +76,8 @@ public class KanjiEncoder extends QRCodeEncoder {
     public byte[] getBytes() {
         BitSequence bs = new BitSequence();
 
-        for (int i = 0; i < _codeWords.size(); i++) {
-            bs.append(_codeWords.get(i), 13);
+        for (int wd : _codeWords) {
+            bs.append(wd, 13);
         }
 
         return bs.getBytes();
@@ -91,7 +87,6 @@ public class KanjiEncoder extends QRCodeEncoder {
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
     public static boolean inSubset(char c) {
-
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
 
         if (charBytes.length != 2) {
@@ -104,7 +99,7 @@ public class KanjiEncoder extends QRCodeEncoder {
             0xE040 <= code && code <= 0xEBBF) {
             int lsb = Byte.toUnsignedInt(charBytes[1]);
             return 0x40 <= lsb && lsb <= 0xFC &&
-                   lsb != 0x7F;
+                   0x7F != lsb;
         } else {
             return false;
         }

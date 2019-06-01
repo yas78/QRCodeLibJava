@@ -1,88 +1,11 @@
 package ys.qrcode.format;
 
-import ys.qrcode.Constants;
 import ys.qrcode.ErrorCorrectionLevel;
 
 /**
  * RSブロック
  */
 public class RSBlock {
-    /**
-     * RSブロック数を返します。
-     *
-     * @param ecLevel
-     *            誤り訂正レベル
-     * @param version
-     *            型番
-     * @param preceding
-     *            RSブロック前半部分は true を指定します。
-     */
-    public static int getTotalNumber(
-        ErrorCorrectionLevel ecLevel, int version, boolean preceding) {
-        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
-
-        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
-        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
-
-        int numFolBlocks = numDataCodewords % numRSBlocks;
-
-        if (preceding) {
-            return numRSBlocks - numFolBlocks;
-        } else {
-            return numFolBlocks;
-        }
-    }
-
-    /**
-     * RSブロックのデータコード語数を返します。
-     *
-     * @param ecLevel
-     *            誤り訂正レベル
-     * @param version
-     *            型番
-     * @param preceding
-     *            RSブロック前半部分は true を指定します。
-     */
-    public static int getNumberDataCodewords(
-        ErrorCorrectionLevel ecLevel, int version, boolean preceding) {
-        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
-
-        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
-        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
-
-        int numPreBlockCodewords = numDataCodewords / numRSBlocks;
-
-        if (preceding) {
-            return numPreBlockCodewords;
-        } else {
-            int numPreBlocks = getTotalNumber(ecLevel, version, true);
-            int numFolBlocks = getTotalNumber(ecLevel, version, false);
-
-            if (numFolBlocks > 0) {
-                return (numDataCodewords - numPreBlockCodewords * numPreBlocks) / numFolBlocks;
-            } else {
-                return 0;
-            }
-        }
-    }
-
-    /**
-     * RSブロックの誤り訂正コード語数を返します。
-     *
-     * @param ecLevel
-     *            誤り訂正レベル
-     * @param version
-     *            型番
-     */
-    public static int getNumberECCodewords(ErrorCorrectionLevel ecLevel, int version) {
-        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
-
-        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
-        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
-
-        return (Codeword.getTotalNumber(version) / numRSBlocks) - (numDataCodewords / numRSBlocks);
-    }
-
     // RSブロック数
     private static final int[][] _totalNumbers = {
         /* Error Correction Level L */
@@ -118,4 +41,77 @@ public class RSBlock {
             51, 54, 57, 60, 63, 66, 70, 74, 77, 81
         }
     };
+
+    /**
+     * RSブロック数を返します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param version
+     *            型番
+     * @param preceding
+     *            RSブロック前半部分は true を指定します。
+     */
+    public static int getTotalNumber(ErrorCorrectionLevel ecLevel,
+                                     int version,
+                                     boolean preceding) {
+        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
+        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
+
+        int numFolBlocks = numDataCodewords % numRSBlocks;
+
+        if (preceding) {
+            return numRSBlocks - numFolBlocks;
+        } else {
+            return numFolBlocks;
+        }
+    }
+
+    /**
+     * RSブロックのデータコード語数を返します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param version
+     *            型番
+     * @param preceding
+     *            RSブロック前半部分は true を指定します。
+     */
+    public static int getNumberDataCodewords(ErrorCorrectionLevel ecLevel,
+                                             int version,
+                                             boolean preceding) {
+        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
+        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
+
+        int numPreBlockCodewords = numDataCodewords / numRSBlocks;
+
+        if (preceding) {
+            return numPreBlockCodewords;
+        } else {
+            int numPreBlocks = getTotalNumber(ecLevel, version, true);
+            int numFolBlocks = getTotalNumber(ecLevel, version, false);
+
+            if (numFolBlocks > 0) {
+                return (numDataCodewords - numPreBlockCodewords * numPreBlocks) / numFolBlocks;
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * RSブロックの誤り訂正コード語数を返します。
+     *
+     * @param ecLevel
+     *            誤り訂正レベル
+     * @param version
+     *            型番
+     */
+    public static int getNumberECCodewords(ErrorCorrectionLevel ecLevel,
+                                           int version) {
+        int numDataCodewords = DataCodeword.getTotalNumber(ecLevel, version);
+        int numRSBlocks = _totalNumbers[ecLevel.toInt()][version];
+
+        return (Codeword.getTotalNumber(version) / numRSBlocks) - (numDataCodewords / numRSBlocks);
+    }
 }

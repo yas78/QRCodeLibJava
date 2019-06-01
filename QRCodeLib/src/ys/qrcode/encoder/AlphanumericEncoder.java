@@ -36,8 +36,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert inSubset(c);
-
         int wd = convertCharCode(c);
         int ret;
 
@@ -64,8 +62,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert inSubset(c);
-
         if (_charCounter % 2 == 0) {
             return 6;
         } else {
@@ -78,7 +74,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      */
     @Override
     public byte[] getBytes() {
-
         BitSequence bs = new BitSequence();
         int bitLength = 11;
 
@@ -101,7 +96,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      * 指定した文字の、英数字モードにおけるコード値を返します。
      */
     private static int convertCharCode(char c) {
-
         if ('A' <= c && c <= 'Z') {
             return c - 55;
         }

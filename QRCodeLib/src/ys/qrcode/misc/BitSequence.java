@@ -36,9 +36,6 @@ public class BitSequence {
      *            データのビット数
      */
     public void append(int data, int length) {
-        assert data >= 0;
-        assert length >= 0;
-
         int remainingLength = length;
         int remainingData = data;
 

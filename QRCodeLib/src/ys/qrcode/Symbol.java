@@ -21,13 +21,16 @@ import ys.qrcode.format.RSBlock;
 import ys.qrcode.format.StructuredAppend;
 import ys.qrcode.format.SymbolSequenceIndicator;
 import ys.qrcode.misc.BitSequence;
-import ys.qrcode.misc.ColorCode;
 import ys.qrcode.misc.DIB;
 
 /**
  * シンボルを表します。
  */
 public class Symbol {
+
+    private static final String WHITE = "#FFFFFF";
+    private static final String BLACK = "#000000";
+
     private final Symbols _parent;
 
     private final int _position;
@@ -508,7 +511,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get1bppDIB(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        return get1bppDIB(moduleSize, BLACK, WHITE);
     }
 
     /**
@@ -596,7 +599,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get24bppDIB(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        return get24bppDIB(moduleSize, BLACK, WHITE);
     }
 
     /**
@@ -675,7 +678,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get1bppImage(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        return get1bppImage(moduleSize, BLACK, WHITE);
     }
 
     /**
@@ -727,7 +730,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get24bppImage(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        return get24bppImage(moduleSize, BLACK, WHITE);
     }
 
     /**
@@ -784,7 +787,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        save1bppDIB(fileName, moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        save1bppDIB(fileName, moduleSize, BLACK, WHITE);
     }
 
     /**
@@ -836,7 +839,7 @@ public class Symbol {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        save24bppDIB(fileName, moduleSize, ColorCode.BLACK, ColorCode.WHITE);
+        save24bppDIB(fileName, moduleSize, BLACK, WHITE);
     }
 
     /**

@@ -75,9 +75,6 @@ class Masking {
      *            マスクパターン参照子
      */
     private static void mask(int[][] moduleMatrix, int maskPatternReference) {
-
-        assert 0 <= maskPatternReference && maskPatternReference <= 7;
-
         BiPredicate<Integer, Integer> condition = getCondition(maskPatternReference);
 
         for (int r = 0; r < moduleMatrix.length; r++) {
@@ -98,7 +95,6 @@ class Masking {
      *            マスクパターン参照子
      */
     private static BiPredicate<Integer, Integer> getCondition(int maskPatternReference) {
-
         switch (maskPatternReference) {
         case 0:
             return (r, c) -> (r + c) % 2 == 0;

@@ -1,7 +1,5 @@
 package ys.qrcode.format;
 
-import ys.qrcode.Constants;
-
 /**
  * モジュール
  */
@@ -13,8 +11,6 @@ public class Module {
      *            型番
      */
     public static int getNumModulesPerSide(int version) {
-        assert Constants.MIN_VERSION <= version && version <= Constants.MAX_VERSION;
-
         return 17 + version * 4;
     }
 }

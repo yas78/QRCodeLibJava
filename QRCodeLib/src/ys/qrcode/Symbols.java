@@ -236,9 +236,6 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * シンボルを追加します。
      */
     private Symbol add() {
-        assert _structuredAppendAllowed;
-        assert _items.size() < 16;
-
         _currSymbol = new Symbol(this);
         _items.add(_currSymbol);
 

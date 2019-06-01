@@ -4,12 +4,20 @@ package ys.qrcode;
  * 型番情報
  */
 class VersionInfo {
+    // 型番情報
+    private static int[] _versionInfoValues = {
+        -1, -1, -1, -1, -1, -1, -1,
+        0x007C94, 0x0085BC, 0x009A99, 0x00A4D3, 0x00BBF6, 0x00C762, 0x00D847, 0x00E60D,
+        0x00F928, 0x010B78, 0x01145D, 0x012A17, 0x013532, 0x0149A6, 0x015683, 0x0168C9,
+        0x0177EC, 0x018EC4, 0x0191E1, 0x01AFAB, 0x01B08E, 0x01CC1A, 0x01D33F, 0x01ED75,
+        0x01F250, 0x0209D5, 0x0216F0, 0x0228BA, 0x02379F, 0x024B0B, 0x02542E, 0x026A64,
+        0x027541, 0x028C69
+    };
+
     /**
      * 型番情報を配置します。
      */
     public static void place(int[][] moduleMatrix, int version) {
-        assert 7 <= version && version <= 40;
-
         int numModulesPerSide = moduleMatrix.length;
 
         int versionInfoValue = _versionInfoValues[version];
@@ -45,15 +53,4 @@ class VersionInfo {
             }
         }
     }
-
-    // 型番情報
-    private static int[] _versionInfoValues = {
-        -1, -1, -1, -1, -1, -1, -1,
-        0x007C94, 0x0085BC, 0x009A99, 0x00A4D3, 0x00BBF6, 0x00C762, 0x00D847, 0x00E60D,
-        0x00F928, 0x010B78, 0x01145D, 0x012A17, 0x013532, 0x0149A6, 0x015683, 0x0168C9,
-        0x0177EC, 0x018EC4, 0x0191E1, 0x01AFAB, 0x01B08E, 0x01CC1A, 0x01D33F, 0x01ED75,
-        0x01F250, 0x0209D5, 0x0216F0, 0x0228BA, 0x02379F, 0x024B0B, 0x02542E, 0x026A64,
-        0x027541, 0x028C69
-    };
-
 }

@@ -39,8 +39,6 @@ public class NumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        assert inSubset(c);
-
         int wd = Integer.parseInt(String.valueOf(c));
         int ret;
 
@@ -66,8 +64,6 @@ public class NumericEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        assert inSubset(c);
-
         if (_charCounter % 3 == 0) {
             return 4;
         } else {
