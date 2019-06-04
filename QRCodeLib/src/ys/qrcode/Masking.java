@@ -17,53 +17,34 @@ class Masking {
      * @return
      *            適用されたマスクパターン参照子
      */
-    public static int apply(int[][] moduleMatrix,
-                            int version,
-                            ErrorCorrectionLevel ecLevel) {
-        int maskPatternReference = selectMaskPattern(moduleMatrix, version, ecLevel);
-        mask(moduleMatrix, maskPatternReference);
-
-        return maskPatternReference;
-    }
-
-    /**
-     * マスクパターンを決定します。
-     *
-     * @param moduleMatrix
-     *            シンボルの明暗パターン
-     * @param version
-     *            型番
-     * @param ecLevel
-     *            誤り訂正レベル
-     * @return
-     *            マスクパターン参照子
-     */
-    private static int selectMaskPattern(int[][] moduleMatrix,
-                                         int version,
-                                         ErrorCorrectionLevel ecLevel) {
+    public static int apply(int version,
+                            ErrorCorrectionLevel ecLevel,
+                            int[][] moduleMatrix) {
         int minPenalty = Integer.MAX_VALUE;
-        int ret = 0;
+        int maskPatternReference = 0;
+        int[][] maskedMatrix = null;
 
-        for (int maskPatternReference = 0; maskPatternReference <= 7; maskPatternReference++) {
-            int[][] moduleMatrixClone = IntegerUtil.cloneDeep(moduleMatrix);
+        for (int i = 0; i <= 7; i++) {
+            int[][] temp = IntegerUtil.cloneDeep(moduleMatrix);
 
-            mask(moduleMatrixClone, maskPatternReference);
-
-            FormatInfo.place(moduleMatrixClone, ecLevel, maskPatternReference);
+            mask(i, temp);
+            FormatInfo.place(ecLevel, i, temp);
 
             if (version >= 7) {
-                VersionInfo.place(moduleMatrixClone, version);
+                VersionInfo.place(version, temp);
             }
 
-            int penalty = MaskingPenaltyScore.calcTotal(moduleMatrixClone);
+            int penalty = MaskingPenaltyScore.calcTotal(temp);
 
             if (penalty < minPenalty) {
                 minPenalty = penalty;
-                ret = maskPatternReference;
+                maskPatternReference = i;
+                maskedMatrix = temp;
             }
         }
 
-        return ret;
+        System.arraycopy(maskedMatrix, 0, moduleMatrix, 0, maskedMatrix.length);
+        return maskPatternReference;
     }
 
     /**
@@ -74,7 +55,7 @@ class Masking {
      * @param maskPatternReference
      *            マスクパターン参照子
      */
-    private static void mask(int[][] moduleMatrix, int maskPatternReference) {
+    private static void mask(int maskPatternReference, int[][] moduleMatrix) {
         BiPredicate<Integer, Integer> condition = getCondition(maskPatternReference);
 
         for (int r = 0; r < moduleMatrix.length; r++) {

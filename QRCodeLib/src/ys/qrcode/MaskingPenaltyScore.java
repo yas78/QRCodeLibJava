@@ -80,15 +80,12 @@ class MaskingPenaltyScore {
 
         for (int r = 0; r < moduleMatrix.length - 1; r++) {
             for (int c = 0; c < moduleMatrix[r].length - 1; c++) {
-                boolean tmp = moduleMatrix[r][c] > 0;
-                boolean sameColor = true;
+                boolean temp = moduleMatrix[r][c] > 0;
 
-                sameColor &= moduleMatrix[r + 0][c + 1] > 0 == tmp;
-                sameColor &= moduleMatrix[r + 1][c + 0] > 0 == tmp;
-                sameColor &= moduleMatrix[r + 1][c + 1] > 0 == tmp;
-
-                if (sameColor) {
-                    penalty += 3;
+                if ((moduleMatrix[r + 0][c + 1] > 0 == temp) &&
+                    (moduleMatrix[r + 1][c + 0] > 0 == temp) &&
+                    (moduleMatrix[r + 1][c + 1] > 0 == temp)) {
+                        penalty += 3;
                 }
             }
         }

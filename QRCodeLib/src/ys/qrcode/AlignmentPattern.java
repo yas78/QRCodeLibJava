@@ -49,7 +49,7 @@ class AlignmentPattern {
     /**
      * 位置合わせパターンを配置します。
      */
-    public static void place(int[][] moduleMatrix, int version) {
+    public static void place(int version, int[][] moduleMatrix) {
         int[] centerPosArray = _centerPosArrays[version];
 
         int maxIndex = centerPosArray.length - 1;

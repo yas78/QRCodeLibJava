@@ -54,8 +54,8 @@ public class ByteEncoder extends QRCodeEncoder {
         byte[] charBytes = String.valueOf(c).getBytes(_charSet);
         int ret = 0;
 
-        for (int i = 0; i < charBytes.length; i++) {
-            _codeWords.add((int) charBytes[i]);
+        for (byte value : charBytes) {
+            _codeWords.add((int) value);
             _charCounter++;
             _bitCounter += 8;
             ret += 8;

@@ -415,7 +415,7 @@ public class Symbol {
         TimingPattern.place(moduleMatrix);
 
         if (_currVersion >= 2) {
-            AlignmentPattern.place(moduleMatrix, _currVersion);
+            AlignmentPattern.place(_currVersion, moduleMatrix);
         }
 
         FormatInfo.placeTempBlank(moduleMatrix);
@@ -425,19 +425,9 @@ public class Symbol {
         }
 
         placeSymbolChar(moduleMatrix);
-
         RemainderBit.place(moduleMatrix);
 
-        int maskPatternReference = Masking.apply(
-                moduleMatrix, _currVersion, _parent.getErrorCorrectionLevel());
-
-        FormatInfo.place(moduleMatrix,
-                         _parent.getErrorCorrectionLevel(),
-                         maskPatternReference);
-
-        if (_currVersion >= 7) {
-            VersionInfo.place(moduleMatrix, _currVersion);
-        }
+        Masking.apply(_currVersion, _parent.getErrorCorrectionLevel(), moduleMatrix);
 
         return moduleMatrix;
     }
@@ -454,12 +444,12 @@ public class Symbol {
         boolean toLeft = true;
         int rowDirection = -1;
 
-        for (int i = 0; i < data.length; i++) {
+        for (byte value : data) {
             int bitPos = 7;
 
             while (bitPos >= 0) {
                 if (moduleMatrix[r][c] == 0) {
-                    moduleMatrix[r][c] = (data[i] & (1 << bitPos)) > 0 ? 1 : -1;
+                    moduleMatrix[r][c] = (value & (1 << bitPos)) > 0 ? 1 : -1;
                     bitPos--;
                 }
 

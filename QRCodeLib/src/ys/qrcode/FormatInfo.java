@@ -27,9 +27,9 @@ class FormatInfo {
      * @param maskPatternReference
      *            マスクパターン参照子
      */
-    public static void place(int[][] moduleMatrix,
-                             ErrorCorrectionLevel ecLevel,
-                             int maskPatternReference) {
+    public static void place(ErrorCorrectionLevel ecLevel,
+                             int maskPatternReference,
+                             int[][] moduleMatrix) {
         int formatInfo = getFormatInfoValue(ecLevel, maskPatternReference);
 
         int r1 = 0;

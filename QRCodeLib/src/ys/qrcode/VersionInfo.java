@@ -17,7 +17,7 @@ class VersionInfo {
     /**
      * 型番情報を配置します。
      */
-    public static void place(int[][] moduleMatrix, int version) {
+    public static void place(int version, int[][] moduleMatrix) {
         int numModulesPerSide = moduleMatrix.length;
 
         int versionInfoValue = _versionInfoValues[version];
