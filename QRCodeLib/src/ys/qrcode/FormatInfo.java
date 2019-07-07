@@ -20,12 +20,12 @@ class FormatInfo {
     /**
      * 形式情報を配置します。
      *
-     * @param moduleMatrix
-     *            シンボルの明暗パターン
      * @param ecLevel
      *            誤り訂正レベル
      * @param maskPatternReference
      *            マスクパターン参照子
+     * @param moduleMatrix
+     *            シンボルの明暗パターン
      */
     public static void place(ErrorCorrectionLevel ecLevel,
                              int maskPatternReference,
