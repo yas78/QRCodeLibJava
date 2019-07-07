@@ -2,7 +2,7 @@ package ys.qrcode;
 
 import java.util.function.BiPredicate;
 
-import ys.qrcode.misc.IntegerUtil;
+import ys.qrcode.misc.ArrayUtil;
 
 class Masking {
     /**
@@ -25,7 +25,7 @@ class Masking {
         int[][] maskedMatrix = null;
 
         for (int i = 0; i <= 7; i++) {
-            int[][] temp = IntegerUtil.cloneDeep(moduleMatrix);
+            int[][] temp = ArrayUtil.deepCopy(moduleMatrix);
 
             mask(i, temp);
             FormatInfo.place(ecLevel, i, temp);

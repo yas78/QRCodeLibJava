@@ -16,11 +16,6 @@ public abstract class QRCodeEncoder {
     int _bitCounter  = 0;
 
     /**
-     * インスタンスを初期化します。
-     */
-    public QRCodeEncoder() { }
-
-    /**
      * 符号化モードを取得します。
      */
     public abstract EncodingMode getEncodingMode();

@@ -10,10 +10,11 @@ class QuietZone {
      * クワイエットゾーンを追加します。
      */
     public static int[][] place(int[][] moduleMatrix) {
-        int[][] ret = new int[moduleMatrix.length + WIDTH * 2][];
+        int size = moduleMatrix.length + WIDTH * 2;
+        int[][] ret = new int[size][];
 
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = new int[ret.length];
+        for (int i = 0; i < size; i++) {
+            ret[i] = new int[size];
         }
 
         for (int i = 0; i < moduleMatrix.length; i++) {

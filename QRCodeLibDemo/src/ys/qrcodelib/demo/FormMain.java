@@ -243,7 +243,7 @@ public class FormMain extends JFrame {
         this.cmbMaxVersion.addActionListener(action());
 
         // numSpinner
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(5, 1, 100, 1);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(4, 1, 100, 1);
         this.numSpinner = new JSpinner(spinnerNumberModel);
         this.numSpinner.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
         this.numSpinner.addChangeListener(numSpinner_stateChanged());

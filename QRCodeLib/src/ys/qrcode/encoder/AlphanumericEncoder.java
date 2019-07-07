@@ -135,17 +135,19 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
     public static boolean inSubset(char c) {
-        return 'A' <= c && c <= 'Z' ||
-               '0' <= c && c <= '9' ||
-               c == ' '             ||
-               c == '.'             ||
-               c == '-'             ||
-               c == '$'             ||
-               c == '%'             ||
-               c == '*'             ||
-               c == '+'             ||
-               c == '/'             ||
-               c == ':';
+        return (
+            'A' <= c && c <= 'Z' ||
+            '0' <= c && c <= '9' ||
+            c == ' '             ||
+            c == '.'             ||
+            c == '-'             ||
+            c == '$'             ||
+            c == '%'             ||
+            c == '*'             ||
+            c == '+'             ||
+            c == '/'             ||
+            c == ':'
+       );
     }
 
     /**

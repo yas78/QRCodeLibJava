@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import ys.image.DIB;
 import ys.qrcode.encoder.QRCodeEncoder;
 import ys.qrcode.format.CharCountIndicator;
 import ys.qrcode.format.Codeword;
@@ -21,7 +22,6 @@ import ys.qrcode.format.RSBlock;
 import ys.qrcode.format.StructuredAppend;
 import ys.qrcode.format.SymbolSequenceIndicator;
 import ys.qrcode.misc.BitSequence;
-import ys.qrcode.misc.DIB;
 
 /**
  * シンボルを表します。
@@ -487,7 +487,7 @@ public class Symbol {
      * 1bppビットマップファイルのバイトデータを返します。
      */
     public byte[] get1bppDIB() {
-        return get1bppDIB(5);
+        return get1bppDIB(4);
     }
 
     /**
@@ -575,7 +575,7 @@ public class Symbol {
      * 24bppビットマップファイルのバイトデータを返します。
      */
     public byte[] get24bppDIB() {
-        return get24bppDIB(5);
+        return get24bppDIB(4);
     }
 
     /**
@@ -654,7 +654,7 @@ public class Symbol {
      * 1bppのシンボル画像を返します。
      */
     public BufferedImage get1bppImage() {
-        return get1bppImage(5);
+        return get1bppImage(4);
     }
 
     /**
@@ -706,7 +706,7 @@ public class Symbol {
      * 24bppのシンボル画像を返します。
      */
     public BufferedImage get24bppImage() {
-        return get24bppImage(5);
+        return get24bppImage(4);
     }
 
     /**
@@ -755,17 +755,17 @@ public class Symbol {
     }
 
     /**
-     * 1bppシンボル画像をファイルに保存します。
+     * シンボル画像を1bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名
      */
     public void save1bppDIB(String fileName) {
-        save1bppDIB(fileName, 5);
+        save1bppDIB(fileName, 4);
     }
 
     /**
-     * 1bppシンボル画像をファイルに保存します。
+     * シンボル画像を1bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名
@@ -781,7 +781,7 @@ public class Symbol {
     }
 
     /**
-     * 1bppシンボル画像をファイルに保存します。
+     * シンボル画像を1bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名
@@ -807,17 +807,17 @@ public class Symbol {
     }
 
     /**
-     * 24bppシンボル画像をファイルに保存します。
+     * シンボル画像を24bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名
      */
     public void save24bppDIB(String fileName) {
-        save24bppDIB(fileName, 5);
+        save24bppDIB(fileName, 4);
     }
 
     /**
-     * 24bppシンボル画像をファイルに保存します。
+     * シンボル画像を24bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名
@@ -833,7 +833,7 @@ public class Symbol {
     }
 
     /**
-     * 24bppシンボル画像をファイルに保存します。
+     * シンボル画像を24bpp DIB形式でファイルに保存します。
      *
      * @param fileName
      *            ファイル名

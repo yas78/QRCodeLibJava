@@ -79,7 +79,7 @@ public class NumericEncoder extends QRCodeEncoder {
         BitSequence bs = new BitSequence();
         int bitLength = 10;
 
-        for (int i = 0; i <= (_codeWords.size() - 1) - 1; i++) {
+        for (int i = 0; i < _codeWords.size() - 1; i++) {
             bs.append(_codeWords.get(i), bitLength);
         }
 

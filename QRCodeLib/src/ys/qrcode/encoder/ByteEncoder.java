@@ -9,7 +9,7 @@ import ys.qrcode.format.ModeIndicator;
  * バイトモードエンコーダー
  */
 public class ByteEncoder extends QRCodeEncoder {
-    private final Charset _charSet;
+    private final Charset _charset;
 
     /**
      * インスタンスを初期化します。
@@ -21,11 +21,11 @@ public class ByteEncoder extends QRCodeEncoder {
     /**
      * インスタンスを初期化します。
      *
-     * @param charSet
+     * @param charset
      *            文字エンコーディング
      */
-    public ByteEncoder(Charset charSet) {
-        _charSet = charSet;
+    public ByteEncoder(Charset charset) {
+        _charset = charset;
     }
 
     /**
@@ -51,7 +51,7 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        byte[] charBytes = String.valueOf(c).getBytes(_charSet);
+        byte[] charBytes = String.valueOf(c).getBytes(_charset);
         int ret = 0;
 
         for (byte value : charBytes) {
@@ -69,7 +69,7 @@ public class ByteEncoder extends QRCodeEncoder {
      */
     @Override
     public int getCodewordBitLength(char c) {
-        byte[] charBytes = String.valueOf(c).getBytes(_charSet);
+        byte[] charBytes = String.valueOf(c).getBytes(_charset);
 
         return 8 * charBytes.length;
     }

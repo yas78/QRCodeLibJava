@@ -3,7 +3,7 @@ package ys.qrcode;
 import java.util.ArrayList;
 import java.util.List;
 
-import ys.qrcode.misc.IntegerUtil;
+import ys.qrcode.misc.ArrayUtil;
 
 /**
  * マスクされたシンボルの失点評価
@@ -38,7 +38,7 @@ class MaskingPenaltyScore {
         int penalty = 0;
 
         penalty += calcAdjacentModulesInRowInSameColor(moduleMatrix);
-        penalty += calcAdjacentModulesInRowInSameColor(IntegerUtil.rotate90(moduleMatrix));
+        penalty += calcAdjacentModulesInRowInSameColor(ArrayUtil.rotate90(moduleMatrix));
 
         return penalty;
     }
@@ -102,7 +102,7 @@ class MaskingPenaltyScore {
         int penalty = 0;
 
         penalty += calcModuleRatioInRow(moduleMatrixTemp);
-        penalty += calcModuleRatioInRow(IntegerUtil.rotate90(moduleMatrixTemp));
+        penalty += calcModuleRatioInRow(ArrayUtil.rotate90(moduleMatrixTemp));
 
         return penalty;
     }
