@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -647,6 +648,72 @@ public class Symbol {
 
         byte[] ret = DIB.build24bppDIB(bitmapData, width, height);
 
+        return ret;
+    }
+
+
+    /***
+     * Base64エンコードされたビットマップデータを返します。
+     */
+    public String getBase64DIB() {
+        return getBase64DIB(4);
+    }
+
+    /***
+     * Base64エンコードされたビットマップデータを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ(px)
+     */
+    public String getBase64DIB(int moduleSize) {
+        return getBase64DIB(moduleSize, 24);
+    }
+
+    /***
+     * Base64エンコードされたビットマップデータを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ(px)
+     * @param colorDepth
+     *            1bitカラーは1、24bitカラーは24を設定します。
+     */
+    public String getBase64DIB(int moduleSize, int colorDepth) {
+        return getBase64DIB(moduleSize, colorDepth, BLACK, WHITE);
+    }
+
+    /***
+     * Base64エンコードされたビットマップデータを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ(px)
+     * @param colorDepth
+     *            1bitカラーは1、24bitカラーは24を設定します。
+     * @param foreRgb
+     *            前景色
+     * @param backRgb
+     *            背景色
+     */
+    public String getBase64DIB(int moduleSize, int colorDepth, String foreRgb, String backRgb) {
+        if (moduleSize < 1) {
+            throw new IllegalArgumentException("moduleSize");
+        }
+
+        byte[] dib;
+
+        switch (colorDepth)
+        {
+            case 1:
+                dib = get1bppDIB(moduleSize, foreRgb, backRgb);
+                break;
+            case 24:
+                dib = get24bppDIB(moduleSize, foreRgb, backRgb);
+                break;
+            default:
+                throw new IllegalArgumentException("colorDepth");
+        }
+
+        Base64.Encoder encoder = Base64.getEncoder();
+        String ret = encoder.encodeToString(dib);
         return ret;
     }
 
