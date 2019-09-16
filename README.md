@@ -28,7 +28,7 @@ public void Example() {
     Symbols symbols = new Symbols();
     symbols.appendText("012345abcdefg");
 
-    Image image = symbols.get(0).get24bppImage();
+    Image image = symbols.get(0).getImage();
 }
 ```
 
@@ -68,7 +68,7 @@ Symbols symbols = new Symbols(1, true);
 symbols.appendText("abcdefghijklmnopqrstuvwxyz");
 
 for (Symbol symbol : symbols) {
-    Image image = symbol.get24bppImage();
+    Image image = symbol.getImage();
 }
 ```
 
@@ -80,10 +80,7 @@ Symbols symbols = new Symbols();
 symbols.appendText("012345abcdefg");
 Symbol symbol = symbols.get(0);
 
-symbol.save1bppDIB("D:\\qrcode1bpp1.bmp");
-symbol.save1bppDIB("D:\\qrcode1bpp2.bmp", 10); // 10 pixel par module
-symbol.save24bppDIB("D:\\qrcode24bpp3.bmp");
-symbol.save24bppDIB("D:\\qrcode24bpp4.bmp", 10); // 10 pixel par module
+symbol.saveBitmap("D:\\qrcode1bpp1.bmp");
 ```
 
 ### 例７．様々な画像形式で保存する
@@ -101,7 +98,7 @@ public void Example() {
     Symbols symbols = new Symbols();
     symbols.appendText("012345abcdefg");
 
-    BufferedImage image = symbols.get(0).get24bppImage();
+    BufferedImage image = symbols.get(0).getImage();
 
     try {
         // PNG

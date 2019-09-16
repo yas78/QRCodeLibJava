@@ -485,24 +485,56 @@ public class Symbol {
     }
 
     /**
-     * 1bppビットマップファイルのバイトデータを返します。
+     * ビットマップファイルのバイトデータを返します。
      */
-    public byte[] get1bppDIB() {
-        return get1bppDIB(4);
+    public byte[] getBitmap() {
+        return getBitmap(4);
     }
 
     /**
-     * 1bppビットマップファイルのバイトデータを返します。
+     * ビットマップファイルのバイトデータを返します。
      *
      * @param moduleSize
      *            モジュールサイズ
      */
-    public byte[] get1bppDIB(int moduleSize) {
+    public byte[] getBitmap(int moduleSize) {
+        return getBitmap1bpp(moduleSize, BLACK, WHITE);
+    }
+
+    /**
+     * ビットマップファイルのバイトデータを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
+     */
+    public byte[] getBitmap(int moduleSize, boolean monochrome) {
+        return getBitmap(moduleSize, monochrome, BLACK, WHITE);
+    }
+
+    /**
+     * ビットマップファイルのバイトデータを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
+     * @param foreRgb
+     *            前景色
+     * @param backRgb
+     *            背景色
+     */
+    public byte[] getBitmap(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        return get1bppDIB(moduleSize, BLACK, WHITE);
+        if (monochrome) {
+            return getBitmap1bpp(moduleSize, foreRgb, backRgb);
+        } else {
+            return getBitmap24bpp(moduleSize, foreRgb, backRgb);
+        }
     }
 
     /**
@@ -515,7 +547,7 @@ public class Symbol {
      * @param backRgb
      *            背景色
      */
-    public byte[] get1bppDIB(int moduleSize, String foreRgb, String backRgb) {
+    private byte[] getBitmap1bpp(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
@@ -567,30 +599,7 @@ public class Symbol {
             }
         }
 
-        byte[] ret = DIB.build1bppDIB(bitmapData, width, height, foreColor, backColor);
-
-        return ret;
-    }
-
-    /**
-     * 24bppビットマップファイルのバイトデータを返します。
-     */
-    public byte[] get24bppDIB() {
-        return get24bppDIB(4);
-    }
-
-    /**
-     * 24bppビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     */
-    public byte[] get24bppDIB(int moduleSize) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        return get24bppDIB(moduleSize, BLACK, WHITE);
+        return DIB.build1bppDIB(bitmapData, width, height, foreColor, backColor);
     }
 
     /**
@@ -603,7 +612,7 @@ public class Symbol {
      * @param backRgb
      *            背景色
      */
-    public byte[] get24bppDIB(int moduleSize, String foreRgb, String backRgb) {
+    private byte[] getBitmap24bpp(int moduleSize, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
@@ -646,17 +655,15 @@ public class Symbol {
             }
         }
 
-        byte[] ret = DIB.build24bppDIB(bitmapData, width, height);
-
-        return ret;
+        return DIB.build24bppDIB(bitmapData, width, height);
     }
 
 
     /***
      * Base64エンコードされたビットマップデータを返します。
      */
-    public String getBase64DIB() {
-        return getBase64DIB(4);
+    public String getBitmapBase64() {
+        return getBitmapBase64(4);
     }
 
     /***
@@ -665,8 +672,8 @@ public class Symbol {
      * @param moduleSize
      *            モジュールサイズ(px)
      */
-    public String getBase64DIB(int moduleSize) {
-        return getBase64DIB(moduleSize, 24);
+    public String getBitmapBase64(int moduleSize) {
+        return getBitmapBase64(moduleSize, false);
     }
 
     /***
@@ -674,11 +681,11 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param colorDepth
-     *            1bitカラーは1、24bitカラーは24を設定します。
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
      */
-    public String getBase64DIB(int moduleSize, int colorDepth) {
-        return getBase64DIB(moduleSize, colorDepth, BLACK, WHITE);
+    public String getBitmapBase64(int moduleSize, boolean monochrome) {
+        return getBitmapBase64(moduleSize, monochrome, BLACK, WHITE);
     }
 
     /***
@@ -686,74 +693,84 @@ public class Symbol {
      *
      * @param moduleSize
      *            モジュールサイズ(px)
-     * @param colorDepth
-     *            1bitカラーは1、24bitカラーは24を設定します。
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
      * @param foreRgb
      *            前景色
      * @param backRgb
      *            背景色
      */
-    public String getBase64DIB(int moduleSize, int colorDepth, String foreRgb, String backRgb) {
+    public String getBitmapBase64(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
         byte[] dib;
 
-        switch (colorDepth)
-        {
-            case 1:
-                dib = get1bppDIB(moduleSize, foreRgb, backRgb);
-                break;
-            case 24:
-                dib = get24bppDIB(moduleSize, foreRgb, backRgb);
-                break;
-            default:
-                throw new IllegalArgumentException("colorDepth");
+        if (monochrome) {
+            dib = getBitmap1bpp(moduleSize, foreRgb, backRgb);
+        } else {
+            dib = getBitmap24bpp(moduleSize, foreRgb, backRgb);
         }
 
         Base64.Encoder encoder = Base64.getEncoder();
-        String ret = encoder.encodeToString(dib);
-        return ret;
+        return encoder.encodeToString(dib);
     }
 
     /**
-     * 1bppのシンボル画像を返します。
+     * シンボルのBufferedImageオブジェクトを返します。
      */
-    public BufferedImage get1bppImage() {
-        return get1bppImage(4);
+    public BufferedImage getImage() {
+        return getImage(4);
     }
 
     /**
-     * 1bppのシンボル画像を返します。
+     * シンボルのBufferedImageオブジェクトを返します。
      *
      * @param moduleSize
      *            モジュールサイズ(px)
      */
-    public BufferedImage get1bppImage(int moduleSize) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        return get1bppImage(moduleSize, BLACK, WHITE);
+    public BufferedImage getImage(int moduleSize) {
+        return getImage(moduleSize, false);
     }
 
     /**
-     * 1bppのシンボル画像を返します。
+     * シンボルのBufferedImageオブジェクトを返します。
      *
      * @param moduleSize
      *            モジュールサイズ(px)
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
+     */
+    public BufferedImage getImage(int moduleSize, boolean monochrome) {
+        return getImage(moduleSize, monochrome, BLACK, WHITE);
+    }
+
+    /**
+     * シンボルのBufferedImageオブジェクトを返します。
+     *
+     * @param moduleSize
+     *            モジュールサイズ(px)
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
      * @param foreRgb
      *            前景色
      * @param backRgb
      *            背景色
      */
-    public BufferedImage get1bppImage(int moduleSize, String foreRgb, String backRgb) {
+    public BufferedImage getImage(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get1bppDIB(moduleSize, foreRgb, backRgb);
+        byte[] dib;
+
+        if (monochrome) {
+            dib = getBitmap1bpp(moduleSize, foreRgb, backRgb);
+        } else {
+            dib = getBitmap24bpp(moduleSize, foreRgb, backRgb);
+        }
+
         BufferedImage ret = null;
 
         try (InputStream bs = new ByteArrayInputStream(dib)) {
@@ -770,156 +787,70 @@ public class Symbol {
     }
 
     /**
-     * 24bppのシンボル画像を返します。
+     * シンボルをBMP形式でファイルに保存します。
+     *
+     * @param fileName
+     *            ファイル名
      */
-    public BufferedImage get24bppImage() {
-        return get24bppImage(4);
+    public void saveBitmap(String fileName) {
+        saveBitmap(fileName, 4);
     }
 
     /**
-     * 24bppのシンボル画像を返します。
+     * シンボルをBMP形式でファイルに保存します。
      *
+     * @param fileName
+     *            ファイル名
      * @param moduleSize
      *            モジュールサイズ(px)
      */
-    public BufferedImage get24bppImage(int moduleSize) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        return get24bppImage(moduleSize, BLACK, WHITE);
+    public void saveBitmap(String fileName, int moduleSize) {
+        saveBitmap(fileName, moduleSize);
     }
 
     /**
-     * 24bppのシンボル画像を返します。
+     * シンボルをBMP形式でファイルに保存します。
      *
+     * @param fileName
+     *            ファイル名
      * @param moduleSize
      *            モジュールサイズ(px)
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
+     */
+    public void saveBitmap(String fileName, int moduleSize, boolean monochrome) {
+        saveBitmap(fileName, moduleSize, monochrome, BLACK, WHITE);
+    }
+
+    /**
+     * シンボルをBMP形式でファイルに保存します。
+     *
+     * @param fileName
+     *            ファイル名
+     * @param moduleSize
+     *            モジュールサイズ(px)
+     * @param monochrome
+     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
      * @param foreRgb
      *            前景色
      * @param backRgb
      *            背景色
      */
-    public BufferedImage get24bppImage(int moduleSize, String foreRgb, String backRgb) {
+    public void saveBitmap(String fileName, int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
         if (moduleSize < 1) {
             throw new IllegalArgumentException("moduleSize");
         }
 
-        byte[] dib = get24bppDIB(moduleSize, foreRgb, backRgb);
-        BufferedImage ret = null;
+        byte[] dib;
 
-        try (InputStream bs = new ByteArrayInputStream(dib)) {
-            try {
-                ret = ImageIO.read(bs);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        if (monochrome) {
+            dib = getBitmap1bpp(moduleSize, foreRgb, backRgb);
+        } else {
+            dib = getBitmap24bpp(moduleSize, foreRgb, backRgb);
         }
-
-        return ret;
-    }
-
-    /**
-     * シンボル画像を1bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     */
-    public void save1bppDIB(String fileName) {
-        save1bppDIB(fileName, 4);
-    }
-
-    /**
-     * シンボル画像を1bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     */
-    public void save1bppDIB(String fileName, int moduleSize) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        save1bppDIB(fileName, moduleSize, BLACK, WHITE);
-    }
-
-    /**
-     * シンボル画像を1bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
-    public void save1bppDIB(String fileName, int moduleSize, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        byte[] dib = get1bppDIB(moduleSize, foreRgb, backRgb);
 
         try (FileOutputStream s = new FileOutputStream(fileName);) {
             s.write(dib);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * シンボル画像を24bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     */
-    public void save24bppDIB(String fileName) {
-        save24bppDIB(fileName, 4);
-    }
-
-    /**
-     * シンボル画像を24bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     */
-    public void save24bppDIB(String fileName, int moduleSize) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        save24bppDIB(fileName, moduleSize, BLACK, WHITE);
-    }
-
-    /**
-     * シンボル画像を24bpp DIB形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
-    public void save24bppDIB(String fileName, int moduleSize, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        byte[] dib = get24bppDIB(moduleSize, foreRgb, backRgb);
-
-        try (FileOutputStream stream = new FileOutputStream(fileName);) {
-            stream.write(dib);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

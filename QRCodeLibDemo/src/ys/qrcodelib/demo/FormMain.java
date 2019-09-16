@@ -69,8 +69,7 @@ public class FormMain extends JFrame {
         }
 
         for (Symbol symbol : symbols) {
-            Image image = symbol.get1bppImage((int) numSpinner.getValue());
-
+            Image image = symbol.getImage((int) numSpinner.getValue());
             ImageIcon icon = new ImageIcon(image);
             JLabel label = new JLabel();
             label.setIcon(icon);
@@ -130,11 +129,7 @@ public class FormMain extends JFrame {
                         filename = baseName + "_" + String.valueOf(i + 1);
                     }
 
-                    if (isMonochrome) {
-                        symbols.get(i).save1bppDIB(filename + ".bmp", (int) numSpinner.getValue());
-                    } else {
-                        symbols.get(i).save24bppDIB(filename + ".bmp", (int) numSpinner.getValue());
-                    }
+                    symbols.get(i).saveBitmap(filename + ".bmp", (int) numSpinner.getValue(), isMonochrome);
                 }
             }
         };
