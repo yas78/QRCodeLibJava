@@ -1,9 +1,11 @@
 package ys.qrcode;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,7 +14,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import ys.image.ColorCode;
 import ys.image.DIB;
+import ys.image.GraphicPath;
 import ys.qrcode.encoder.QRCodeEncoder;
 import ys.qrcode.format.CharCountIndicator;
 import ys.qrcode.format.Codeword;
@@ -24,13 +28,11 @@ import ys.qrcode.format.StructuredAppend;
 import ys.qrcode.format.SymbolSequenceIndicator;
 import ys.qrcode.misc.BitSequence;
 
-/**
- * シンボルを表します。
- */
+
 public class Symbol {
 
-    private static final String WHITE = "#FFFFFF";
-    private static final String BLACK = "#000000";
+    private final int DEFAULT_MODULE_SIZE = 5;
+    private final int MIN_MODULE_SIZE = 2;
 
     private final Symbols _parent;
 
@@ -46,12 +48,6 @@ public class Symbol {
     private final List<QRCodeEncoder> _segments;
     private final int[]               _segmentCounter;
 
-    /**
-     * インスタンスを初期化します。
-     *
-     * @param parent
-     *            親オブジェクト
-     */
     public Symbol(Symbols parent) {
         _parent = parent;
 
@@ -79,35 +75,18 @@ public class Symbol {
         }
     }
 
-    /**
-     * 親オブジェクトを取得します。
-     */
     public Symbols getParent() {
         return _parent;
     }
 
-    /**
-     * 型番を取得します。
-     */
     public int getVersion() {
         return _currVersion;
     }
 
-    /**
-     * 現在の符号化モードを取得します。
-     */
     protected EncodingMode getCurrentEncodingMode() {
         return _currEncodingMode;
     }
 
-    /**
-     * シンボルに文字を追加します。
-     *
-     * @param c
-     *      対象文字
-     * @return
-     *      シンボル容量が不足している場合は false を返します。
-     */
     protected boolean tryAppend(char c) {
         int bitLength = _currEncoder.getCodewordBitLength(c);
 
@@ -124,16 +103,6 @@ public class Symbol {
         return true;
     }
 
-    /**
-     * 符号化モードを設定します。
-     *
-     * @param encMode
-     *      符号化モード
-     * @param c
-     *      符号化する最初の文字。この文字はシンボルに追加されません。
-     * @return
-     *      シンボル容量が不足している場合は false を返します。
-     */
     protected boolean trySetEncodingMode(EncodingMode encMode, char c) {
         QRCodeEncoder encoder = QRCodeEncoder.createEncoder(
                 encMode, _parent.getByteModeCharset());
@@ -158,9 +127,6 @@ public class Symbol {
         return true;
     }
 
-    /**
-     * 型番を決定します。
-     */
     private void selectVersion() {
         for (int i = 1; i < _segmentCounter.length; i++) {
             int num = _segmentCounter[i];
@@ -180,9 +146,6 @@ public class Symbol {
         }
     }
 
-    /**
-     * データブロックを返します。
-     */
     private byte[][] buildDataBlock() {
         byte[] dataBytes = getMessageBytes();
 
@@ -217,12 +180,6 @@ public class Symbol {
         return ret;
     }
 
-    /**
-     * 誤り訂正データ領域のブロックを生成します。
-     *
-     * @param dataBlock
-     *            データ領域のブロック
-     */
     private byte[][] buildErrorCorrectionBlock(byte[][] dataBlock) {
         int numECCodewords = RSBlock.getNumberECCodewords(
                 _parent.getErrorCorrectionLevel(), _currVersion);
@@ -272,9 +229,6 @@ public class Symbol {
         return ret;
     }
 
-    /**
-     * 符号化領域のバイトデータを返します。
-     */
     private byte[] getEncodingRegionBytes() {
         byte[][] dataBlock = buildDataBlock();
         byte[][] ecBlock = buildErrorCorrectionBlock(dataBlock);
@@ -318,9 +272,6 @@ public class Symbol {
         return ret;
     }
 
-    /**
-     * コード語に変換するメッセージビット列を返します。
-     */
     private byte[] getMessageBytes() {
         BitSequence bs = new BitSequence();
 
@@ -399,9 +350,6 @@ public class Symbol {
         }
     }
 
-    /**
-     * シンボルの明暗パターンを返します。
-     */
     private int[][] getModuleMatrix() {
         int numModulesPerSide = Module.getNumModulesPerSide(_currVersion);
 
@@ -433,9 +381,6 @@ public class Symbol {
         return moduleMatrix;
     }
 
-    /**
-     * シンボルキャラクタを配置します。
-     */
     private void placeSymbolChar(int[][] moduleMatrix) {
         byte[] data = getEncodingRegionBytes();
 
@@ -484,50 +429,33 @@ public class Symbol {
         }
     }
 
-    /**
-     * ビットマップファイルのバイトデータを返します。
-     */
     public byte[] getBitmap() {
-        return getBitmap(4);
+        return getBitmap(DEFAULT_MODULE_SIZE);
     }
 
-    /**
-     * ビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     */
     public byte[] getBitmap(int moduleSize) {
-        return getBitmap1bpp(moduleSize, BLACK, WHITE);
+        return getBitmap1bpp(moduleSize, ColorCode.BLACK, ColorCode.WHITE);
     }
 
-    /**
-     * ビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     */
     public byte[] getBitmap(int moduleSize, boolean monochrome) {
-        return getBitmap(moduleSize, monochrome, BLACK, WHITE);
+        return getBitmap(moduleSize, monochrome, ColorCode.BLACK, ColorCode.WHITE);
     }
 
-    /**
-     * ビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     public byte[] getBitmap(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        if (ColorCode.isWebColor(backRgb) == false) {
+            throw new IllegalArgumentException("backRgb");
         }
 
         if (monochrome) {
@@ -537,19 +465,21 @@ public class Symbol {
         }
     }
 
-    /**
-     * 1bppビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     private byte[] getBitmap1bpp(int moduleSize, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        if (ColorCode.isWebColor(backRgb) == false) {
+            throw new IllegalArgumentException("backRgb");
         }
 
         Color foreColor = Color.decode(foreRgb);
@@ -602,18 +532,8 @@ public class Symbol {
         return DIB.build1bppDIB(bitmapData, width, height, foreColor, backColor);
     }
 
-    /**
-     * 24bppビットマップファイルのバイトデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     private byte[] getBitmap24bpp(int moduleSize, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
         }
 
@@ -658,51 +578,33 @@ public class Symbol {
         return DIB.build24bppDIB(bitmapData, width, height);
     }
 
-
-    /***
-     * Base64エンコードされたビットマップデータを返します。
-     */
     public String getBitmapBase64() {
         return getBitmapBase64(4);
     }
 
-    /***
-     * Base64エンコードされたビットマップデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     */
     public String getBitmapBase64(int moduleSize) {
         return getBitmapBase64(moduleSize, false);
     }
 
-    /***
-     * Base64エンコードされたビットマップデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     */
     public String getBitmapBase64(int moduleSize, boolean monochrome) {
-        return getBitmapBase64(moduleSize, monochrome, BLACK, WHITE);
+        return getBitmapBase64(moduleSize, monochrome, ColorCode.BLACK, ColorCode.WHITE);
     }
 
-    /***
-     * Base64エンコードされたビットマップデータを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     public String getBitmapBase64(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        if (ColorCode.isWebColor(backRgb) == false) {
+            throw new IllegalArgumentException("backRgb");
         }
 
         byte[] dib;
@@ -717,50 +619,33 @@ public class Symbol {
         return encoder.encodeToString(dib);
     }
 
-    /**
-     * シンボルのBufferedImageオブジェクトを返します。
-     */
     public BufferedImage getImage() {
         return getImage(4);
     }
 
-    /**
-     * シンボルのBufferedImageオブジェクトを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     */
     public BufferedImage getImage(int moduleSize) {
         return getImage(moduleSize, false);
     }
 
-    /**
-     * シンボルのBufferedImageオブジェクトを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     */
     public BufferedImage getImage(int moduleSize, boolean monochrome) {
-        return getImage(moduleSize, monochrome, BLACK, WHITE);
+        return getImage(moduleSize, monochrome, ColorCode.BLACK, ColorCode.WHITE);
     }
 
-    /**
-     * シンボルのBufferedImageオブジェクトを返します。
-     *
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     public BufferedImage getImage(int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        if (ColorCode.isWebColor(backRgb) == false) {
+            throw new IllegalArgumentException("backRgb");
         }
 
         byte[] dib;
@@ -786,59 +671,33 @@ public class Symbol {
         return ret;
     }
 
-    /**
-     * シンボルをBMP形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     */
     public void saveBitmap(String fileName) {
-        saveBitmap(fileName, 4);
+        saveBitmap(fileName, DEFAULT_MODULE_SIZE);
     }
 
-    /**
-     * シンボルをBMP形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     */
     public void saveBitmap(String fileName, int moduleSize) {
         saveBitmap(fileName, moduleSize);
     }
 
-    /**
-     * シンボルをBMP形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     */
     public void saveBitmap(String fileName, int moduleSize, boolean monochrome) {
-        saveBitmap(fileName, moduleSize, monochrome, BLACK, WHITE);
+        saveBitmap(fileName, moduleSize, monochrome, ColorCode.BLACK, ColorCode.WHITE);
     }
 
-    /**
-     * シンボルをBMP形式でファイルに保存します。
-     *
-     * @param fileName
-     *            ファイル名
-     * @param moduleSize
-     *            モジュールサイズ(px)
-     * @param monochrome
-     *            1bitカラーはtrue、24bitカラーはfalseを設定します。
-     * @param foreRgb
-     *            前景色
-     * @param backRgb
-     *            背景色
-     */
     public void saveBitmap(String fileName, int moduleSize, boolean monochrome, String foreRgb, String backRgb) {
-        if (moduleSize < 1) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
             throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        if (ColorCode.isWebColor(backRgb) == false) {
+            throw new IllegalArgumentException("backRgb");
         }
 
         byte[] dib;
@@ -854,5 +713,119 @@ public class Symbol {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void saveSvg(String fileName) {
+        saveSvg(fileName, 5);
+    }
+
+    public void saveSvg(String fileName, int moduleSize) {
+        saveSvg(fileName, moduleSize, ColorCode.BLACK);
+    }
+
+    public void saveSvg(String fileName, int moduleSize, String foreRgb) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("fileName");
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
+            throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        String newLine = System.lineSeparator();
+
+        String svg = getSvg(moduleSize, foreRgb);
+        String svgFile =
+            "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" + newLine +
+            "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'" + newLine +
+            "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>" + newLine +
+            svg + newLine;
+
+        try (FileWriter fw = new FileWriter(fileName);) {
+            fw.write(svgFile);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public String getSvg() {
+        return getSvg(5);
+    }
+
+    public String getSvg(int moduleSize) {
+        return getSvg(moduleSize, ColorCode.BLACK);
+    }
+
+    public String getSvg(int moduleSize, String foreRgb) {
+        if (_dataBitCounter == 0) {
+            throw new IllegalStateException();
+        }
+
+        if (moduleSize < MIN_MODULE_SIZE) {
+            throw new IllegalArgumentException("moduleSize");
+        }
+
+        if (ColorCode.isWebColor(foreRgb) == false) {
+            throw new IllegalArgumentException("foreRgb");
+        }
+
+        int[][] moduleMatrix = QuietZone.place(getModuleMatrix());
+
+        int width, height;
+        width = height = moduleSize * moduleMatrix.length;
+
+        int[][] image = new int[height][];
+
+        int r = 0;
+        for (int[] row : moduleMatrix) {
+            int[] imageRow = new int[width];
+            int c = 0;
+
+            for (int value : row) {
+                for (int j = 0; j < moduleSize; ++j) {
+                    imageRow[c] = value;
+                    c++;
+                }
+            }
+
+            for (int i = 0; i < moduleSize; ++i) {
+                image[r] = imageRow;
+                r++;
+            }
+        }
+
+        Point[][] paths = GraphicPath.FindContours(image);
+        StringBuilder buf = new StringBuilder();
+        String newLine = System.lineSeparator();
+        String indent = new String(new char[11]).replace("\0", " ");
+
+        for (Point[] path : paths) {
+            buf.append(indent + "M ");
+
+            for (Point p : path) {
+                buf.append(String.valueOf(p.x) + "," + String.valueOf(p.y) + " ");
+            }
+
+            buf.append("Z" + newLine);
+        }
+
+        String data = buf.toString().trim();
+        String svg =
+            "<svg xmlns=\'http://www.w3.org/2000/svg\'" + newLine +
+            "    width=\'" + width + "\' height=\'" + height + "\' viewBox=\'0 0 " + width + " " + height + "\'>" + newLine +
+            "    <path fill='" + foreRgb + "' stroke='" + foreRgb + "' stroke-width='1'" + newLine +
+            "        d=\'" + data + "\'" + newLine +
+            "    />" + newLine +
+            "</svg>";
+
+        return svg;
     }
 }

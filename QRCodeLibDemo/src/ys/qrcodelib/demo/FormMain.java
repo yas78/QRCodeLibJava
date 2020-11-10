@@ -87,29 +87,42 @@ public class FormMain extends JFrame {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String baseName;
-                boolean isMonochrome;
-
                 JFileChooser chooser = new JFileChooser();
                 chooser.setAcceptAllFileFilterUsed(false);
-                FileFilter filtermonochrome = new FileNameExtensionFilter("Monochrome Bitmap", "bmp");
-                FileFilter filterColor = new FileNameExtensionFilter("24-bit Bitmap", "bmp");
+                FileFilter filterMonochrome = new FileNameExtensionFilter("Monochrome Bitmap (*.bmp)", "bmp");
+                FileFilter filterColor = new FileNameExtensionFilter("24-bit Bitmap (*.bmp)", "bmp");
+                FileFilter filterSvg = new FileNameExtensionFilter("SVG (*.svg)", "svg");
 
-                chooser.addChoosableFileFilter(filtermonochrome);
+                chooser.addChoosableFileFilter(filterMonochrome);
                 chooser.addChoosableFileFilter(filterColor);
+                chooser.addChoosableFileFilter(filterSvg);
 
                 if (chooser.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
                     return;
                 }
 
                 File file = chooser.getSelectedFile();
-                isMonochrome = chooser.getFileFilter().equals(filtermonochrome);
-                baseName = new File(file.getParent(), FileUtil.getFileNameWithoutExtension(file.getName())).getPath();
+                String baseName = new File(file.getParent(), FileUtil.getFileNameWithoutExtension(file.getName())).getPath();
+
+                FileFilter filter = chooser.getFileFilter();
+                boolean isMonochrome = (filter == filterMonochrome);
+                String ext;
+
+                if (filter == filterMonochrome) {
+                    ext = ".bmp";
+                } else if (filter == filterColor) {
+                    ext = ".bmp";
+                } else if ( filter == filterSvg) {
+                    ext = ".svg";
+                } else {
+                    ext = null;
+                }
 
                 ErrorCorrectionLevel ecLevel = (ErrorCorrectionLevel) cmbErrorCorrectionLevel.getSelectedItem();
                 int version = (int) cmbMaxVersion.getSelectedItem();
                 boolean allowStructuredAppend = chkStructuredAppend.isSelected();
                 Charset charset = (Charset) cmbCharset.getSelectedItem();
+                int moduleSize = (int) numSpinner.getValue();
 
                 Symbols symbols = new Symbols(ecLevel, version, allowStructuredAppend, charset.name());
 
@@ -129,7 +142,14 @@ public class FormMain extends JFrame {
                         filename = baseName + "_" + String.valueOf(i + 1);
                     }
 
-                    symbols.get(i).saveBitmap(filename + ".bmp", (int) numSpinner.getValue(), isMonochrome);
+                    switch (ext.toLowerCase()) {
+                    case ".bmp":
+                        symbols.get(i).saveBitmap(filename + ext, moduleSize, isMonochrome);
+                        break;
+                    case ".svg":
+                        symbols.get(i).saveSvg(filename + ext, moduleSize);
+
+                    }
                 }
             }
         };
@@ -238,7 +258,7 @@ public class FormMain extends JFrame {
         this.cmbMaxVersion.addActionListener(action());
 
         // numSpinner
-        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(4, 1, 100, 1);
+        SpinnerNumberModel spinnerNumberModel = new SpinnerNumberModel(5, 2, 100, 1);
         this.numSpinner = new JSpinner(spinnerNumberModel);
         this.numSpinner.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
         this.numSpinner.addChangeListener(numSpinner_stateChanged());
