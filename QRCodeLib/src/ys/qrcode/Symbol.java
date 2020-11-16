@@ -676,7 +676,7 @@ public class Symbol {
     }
 
     public void saveBitmap(String fileName, int moduleSize) {
-        saveBitmap(fileName, moduleSize);
+        saveBitmap(fileName, moduleSize, true);
     }
 
     public void saveBitmap(String fileName, int moduleSize, boolean monochrome) {
