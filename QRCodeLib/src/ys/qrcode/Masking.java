@@ -61,7 +61,7 @@ class Masking {
         for (int r = 0; r < moduleMatrix.length; r++) {
             for (int c = 0; c < moduleMatrix[r].length; c++) {
                 if (Math.abs(moduleMatrix[r][c]) == 1) {
-                    if (condition.test(new Integer(r), new Integer(c))) {
+                    if (condition.test(Integer.valueOf(r), Integer.valueOf(c))) {
                         moduleMatrix[r][c] *= -1;
                     }
                 }
