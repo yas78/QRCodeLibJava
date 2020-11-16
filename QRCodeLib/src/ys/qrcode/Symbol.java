@@ -676,7 +676,7 @@ public class Symbol {
     }
 
     public void saveBitmap(String fileName, int moduleSize) {
-        saveBitmap(fileName, moduleSize);
+        saveBitmap(fileName, moduleSize, false);
     }
 
     public void saveBitmap(String fileName, int moduleSize, boolean monochrome) {
@@ -790,13 +790,13 @@ public class Symbol {
             int c = 0;
 
             for (int value : row) {
-                for (int j = 0; j < moduleSize; ++j) {
+                for (int j = 0; j < moduleSize; j++) {
                     imageRow[c] = value;
                     c++;
                 }
             }
 
-            for (int i = 0; i < moduleSize; ++i) {
+            for (int i = 0; i < moduleSize; i++) {
                 image[r] = imageRow;
                 r++;
             }

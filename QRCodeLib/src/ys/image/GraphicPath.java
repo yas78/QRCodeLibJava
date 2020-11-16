@@ -13,8 +13,8 @@ public class GraphicPath {
     public static Point[][] FindContours(int[][] image) {
         List<Point[]> paths = new ArrayList<Point[]>();
 
-        for (int y = 0; y < image.length - 1; ++y) {
-            for (int x = 0; x < image[y].length - 1; ++x) {
+        for (int y = 0; y < image.length - 1; y++) {
+            for (int x = 0; x < image[y].length - 1; x++) {
                 if (image[y][x] == Integer.MAX_VALUE) {
                     continue;
                 }
