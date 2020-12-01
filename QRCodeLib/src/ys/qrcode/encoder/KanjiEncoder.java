@@ -53,12 +53,13 @@ public class KanjiEncoder extends QRCodeEncoder {
         }
 
         wd = ((wd >> 8) * 0xC0) + (wd & 0xFF);
-
         _codeWords.add(wd);
-        _charCounter++;
-        _bitCounter += 13;
 
-        return 13;
+        int ret = getCodewordBitLength(c);
+        _bitCounter += ret;
+        _charCounter++;
+
+        return ret;
     }
 
     /**
@@ -100,15 +101,19 @@ public class KanjiEncoder extends QRCodeEncoder {
             int lsb = Byte.toUnsignedInt(charBytes[1]);
             return 0x40 <= lsb && lsb <= 0xFC &&
                    0x7F != lsb;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
     public static boolean inExclusiveSubset(char c) {
+        if (AlphanumericEncoder.inSubset(c)) {
+            return false;
+        }
+
         return inSubset(c);
     }
 }

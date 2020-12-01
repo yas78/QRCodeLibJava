@@ -40,21 +40,19 @@ public class NumericEncoder extends QRCodeEncoder {
     @Override
     public int append(char c) {
         int wd = Integer.parseInt(String.valueOf(c));
-        int ret;
 
         if (_charCounter % 3 == 0) {
             _codeWords.add(wd);
-            ret = 4;
         } else {
             int temp = _codeWords.get(_codeWords.size() - 1);
             temp *= 10;
             temp += wd;
             _codeWords.set(_codeWords.size() - 1, temp);
-            ret = 3;
         }
 
-        _charCounter++;
+        int ret = getCodewordBitLength(c);
         _bitCounter += ret;
+        _charCounter++;
 
         return ret;
     }
@@ -104,7 +102,7 @@ public class NumericEncoder extends QRCodeEncoder {
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
     public static boolean inSubset(char c) {
-        return c >= '0' && c <= '9';
+        return '0' <= c && c <= '9';
     }
 
     /**

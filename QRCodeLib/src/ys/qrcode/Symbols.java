@@ -25,7 +25,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private final Charset              _shiftJISCharset;
 
     private Symbol _currSymbol;
-    private int    _structuredAppendParity;
+    private int    _parity;
 
     /**
      * インスタンスを初期化します。
@@ -163,7 +163,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         _byteModeCharset            = Charset.forName(byteModeCharset);
         _shiftJISCharset            = Charset.forName("shift_jis");
 
-        _structuredAppendParity = 0;
+        _parity = 0;
         _currSymbol = new Symbol(this);
 
         _items.add(_currSymbol);
@@ -228,8 +228,8 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     /**
      * 構造的連接のパリティを取得します。
      */
-    protected int getStructuredAppendParity() {
-        return _structuredAppendParity;
+    protected int getParity() {
+        return _parity;
     }
 
     /**
@@ -418,12 +418,12 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectModeWhileInNumericMode(String s, int startIndex) {
-        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
-            return EncodingMode.EIGHT_BIT_BYTE;
-        }
-
         if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
             return EncodingMode.KANJI;
+        }
+
+        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+            return EncodingMode.EIGHT_BIT_BYTE;
         }
 
         if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
@@ -589,7 +589,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         }
 
         for (byte b : charBytes) {
-            _structuredAppendParity ^= Byte.toUnsignedInt(b);
+            _parity ^= Byte.toUnsignedInt(b);
         }
     }
 

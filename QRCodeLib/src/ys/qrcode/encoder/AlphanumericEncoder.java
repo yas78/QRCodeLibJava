@@ -37,22 +37,19 @@ public class AlphanumericEncoder extends QRCodeEncoder {
     @Override
     public int append(char c) {
         int wd = convertCharCode(c);
-        int ret;
 
         if (_charCounter % 2 == 0) {
             _codeWords.add(wd);
-            ret = 6;
         } else {
             int temp = _codeWords.get(_codeWords.size() - 1);
             temp *= 45;
             temp += wd;
             _codeWords.set(_codeWords.size() - 1, temp);
-
-            ret = 5;
         }
 
-        _charCounter++;
+        int ret = getCodewordBitLength(c);
         _bitCounter += ret;
+        _charCounter++;
 
         return ret;
     }
@@ -158,10 +155,6 @@ public class AlphanumericEncoder extends QRCodeEncoder {
             return false;
         }
 
-        if (inSubset(c)) {
-            return true;
-        }
-
-        return false;
+        return inSubset(c);
     }
 }

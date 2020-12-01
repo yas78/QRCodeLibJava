@@ -294,7 +294,7 @@ public class Symbol {
                   SymbolSequenceIndicator.POSITION_LENGTH);
         bs.append(_parent.getCount() - 1,
                   SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH);
-        bs.append(_parent.getStructuredAppendParity(),
+        bs.append(_parent.getParity(),
                   StructuredAppend.PARITY_DATA_LENGTH);
     }
 
@@ -716,7 +716,7 @@ public class Symbol {
     }
 
     public void saveSvg(String fileName) {
-        saveSvg(fileName, 5);
+        saveSvg(fileName, DEFAULT_MODULE_SIZE);
     }
 
     public void saveSvg(String fileName, int moduleSize) {

@@ -34,6 +34,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ys.qrcode.Constants;
 import ys.qrcode.ErrorCorrectionLevel;
 import ys.qrcode.Symbol;
 import ys.qrcode.Symbols;
@@ -251,7 +252,7 @@ public class FormMain extends JFrame {
         // cmbMaxVersion
         this.cmbMaxVersion = new JComboBox<Integer>();
         this.cmbMaxVersion.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
-        for (int i = 1; i <= 40; i++) {
+        for (int i = Constants.MIN_VERSION; i <= Constants.MAX_VERSION; i++) {
             this.cmbMaxVersion.addItem(i);
         }
         this.cmbMaxVersion.setSelectedIndex(this.cmbMaxVersion.getItemCount() - 1);

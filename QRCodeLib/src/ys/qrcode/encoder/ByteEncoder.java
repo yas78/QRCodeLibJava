@@ -52,14 +52,14 @@ public class ByteEncoder extends QRCodeEncoder {
     @Override
     public int append(char c) {
         byte[] charBytes = String.valueOf(c).getBytes(_charset);
-        int ret = 0;
 
         for (byte value : charBytes) {
             _codeWords.add((int) value);
-            _charCounter++;
-            _bitCounter += 8;
-            ret += 8;
         }
+
+        int ret = 8 * charBytes.length;
+        _bitCounter += ret;
+        _charCounter += charBytes.length;
 
         return ret;
     }
@@ -99,10 +99,6 @@ public class ByteEncoder extends QRCodeEncoder {
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
     public static boolean inExclusiveSubset(char c) {
-        if (NumericEncoder.inSubset(c)) {
-            return false;
-        }
-
         if (AlphanumericEncoder.inSubset(c)) {
             return false;
         }
@@ -111,10 +107,6 @@ public class ByteEncoder extends QRCodeEncoder {
             return false;
         }
 
-        if (inSubset(c)) {
-            return true;
-        }
-
-        return false;
+        return inSubset(c);
     }
 }
