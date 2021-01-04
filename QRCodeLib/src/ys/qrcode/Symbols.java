@@ -304,109 +304,115 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param s
      *            対象文字列
-     * @param startIndex
+     * @param start
      *            評価を開始する位置
      */
-    private EncodingMode selectInitialMode(String s, int startIndex) {
-        int version = _currSymbol.getVersion();
-
-        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
+    private EncodingMode selectInitialMode(String s, int start) {
+        if (KanjiEncoder.inSubset(s.charAt(start))) {
             return EncodingMode.KANJI;
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
-        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
-            int cnt = 0;
-            boolean flg = false;
-
-            for (int i = startIndex; i < s.length(); i++) {
-                if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
-                    cnt++;
-                } else {
-                    break;
-                }
-            }
-
-            if (1 <= version && version <= 9) {
-                flg = cnt < 6;
-            } else if (10 <= version && version <= 26) {
-                flg = cnt < 7;
-            } else if (27 <= version && version <= 40) {
-                flg = cnt < 8;
-            } else {
-                throw new InternalError();
-            }
-
-            if (flg) {
-                if ((startIndex + cnt) < s.length()) {
-                    if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex + cnt))) {
-                        return EncodingMode.EIGHT_BIT_BYTE;
-                    } else {
-                        return EncodingMode.ALPHA_NUMERIC;
-                    }
-                } else {
-                    return EncodingMode.ALPHA_NUMERIC;
-                }
-            } else {
-                return EncodingMode.ALPHA_NUMERIC;
-            }
+        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start))) {
+            return selectModeWhenInitialDataAlphanumeric(s, start);
         }
 
-        if (NumericEncoder.inSubset(s.charAt(startIndex))) {
-            int cnt = 0;
-            boolean flg1 = false;
-            boolean flg2 = false;
-
-            for (int i = startIndex; i < s.length(); i++) {
-                if (NumericEncoder.inSubset(s.charAt(i))) {
-                    cnt++;
-                } else {
-                    break;
-                }
-            }
-
-            if (1 <= version && version <= 9) {
-                flg1 = cnt < 4;
-                flg2 = cnt < 7;
-            } else if (10 <= version && version <= 26) {
-                flg1 = cnt < 4;
-                flg2 = cnt < 8;
-            } else if (27 <= version && version <= 40) {
-                flg1 = cnt < 5;
-                flg2 = cnt < 9;
-            } else {
-                throw new InternalError();
-            }
-
-            if (flg1) {
-                if ((startIndex + cnt) < s.length()) {
-                    flg1 = ByteEncoder.inExclusiveSubset(s.charAt(startIndex + cnt));
-                } else {
-                    flg1 = false;
-                }
-            }
-
-            if (flg2) {
-                if ((startIndex + cnt) < s.length()) {
-                    flg2 = AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex + cnt));
-                } else {
-                    flg2 = false;
-                }
-            }
-
-            if (flg1) {
-                return EncodingMode.EIGHT_BIT_BYTE;
-            } else if (flg2) {
-                return EncodingMode.ALPHA_NUMERIC;
-            } else {
-                return EncodingMode.NUMERIC;
-            }
+        if (NumericEncoder.inSubset(s.charAt(start))) {
+            return selectModeWhenInitialDataNumeric(s, start);
         }
 
         throw new InternalError();
+    }
+
+    private EncodingMode selectModeWhenInitialDataAlphanumeric(String s, int start) {
+        int cnt = 0;
+
+        for (int i = start; i < s.length(); i++) {
+            if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
+                cnt++;
+            } else {
+                break;
+            }
+        }
+
+        int version = _currSymbol.getVersion();
+        boolean flg;
+
+        if (1 <= version && version <= 9) {
+            flg = cnt < 6;
+        } else if (10 <= version && version <= 26) {
+            flg = cnt < 7;
+        } else if (27 <= version && version <= 40) {
+            flg = cnt < 8;
+        } else {
+            throw new InternalError();
+        }
+
+        if (flg) {
+            if ((start + cnt) < s.length()) {
+                if (ByteEncoder.inSubset(s.charAt(start + cnt))) {
+                    return EncodingMode.EIGHT_BIT_BYTE;
+                }
+            }
+        }
+
+        return EncodingMode.ALPHA_NUMERIC;
+    }
+
+    private EncodingMode selectModeWhenInitialDataNumeric(String s, int start) {
+        int cnt = 0;
+
+        for (int i = start; i < s.length(); i++) {
+            if (NumericEncoder.inSubset(s.charAt(i))) {
+                cnt++;
+            } else {
+                break;
+            }
+        }
+
+        int version = _currSymbol.getVersion();
+        boolean flg;
+
+        if (1 <= version && version <= 9) {
+            flg = cnt < 4;
+        } else if (10 <= version && version <= 26) {
+            flg = cnt < 4;
+        } else if (27 <= version && version <= 40) {
+            flg = cnt < 5;
+        } else {
+            throw new InternalError();
+        }
+
+        if (flg) {
+            if ((start + cnt) < s.length()) {
+                if (ByteEncoder.inExclusiveSubset(s.charAt(start + cnt))) {
+                    return EncodingMode.EIGHT_BIT_BYTE;
+                }
+            }
+        }
+
+        if (1 <= version && version <= 9) {
+            flg = cnt < 7;
+        } else if (10 <= version && version <= 26) {
+            flg = cnt < 8;
+        } else if (27 <= version && version <= 40) {
+            flg = cnt < 9;
+        } else {
+            throw new InternalError();
+        }
+
+        if (flg) {
+            if ((start + cnt) < s.length()) {
+                if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start + cnt))) {
+                    return EncodingMode.ALPHA_NUMERIC;
+                }
+            }
+        }
+
+        return EncodingMode.NUMERIC;
     }
 
     /**
@@ -414,19 +420,19 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param s
      *            対象文字列
-     * @param startIndex
+     * @param start
      *            評価を開始する位置
      */
-    private EncodingMode selectModeWhileInNumericMode(String s, int startIndex) {
-        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
+    private EncodingMode selectModeWhileInNumericMode(String s, int start) {
+        if (KanjiEncoder.inSubset(s.charAt(start))) {
             return EncodingMode.KANJI;
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
-        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.ALPHA_NUMERIC;
         }
 
@@ -438,24 +444,30 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param s
      *            対象文字列
-     * @param startIndex
+     * @param start
      *            評価を開始する位置
      */
-    private EncodingMode selectModeWhileInAlphanumericMode(String s, int startIndex) {
-        int version = _currSymbol.getVersion();
-
-        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
+    private EncodingMode selectModeWhileInAlphanumericMode(String s, int start) {
+        if (KanjiEncoder.inSubset(s.charAt(start))) {
             return EncodingMode.KANJI;
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(startIndex))) {
+        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
-        int cnt = 0;
-        boolean flg = false;
+        if (mustChangeAlphanumericToNumeric(s, start)) {
+            return EncodingMode.NUMERIC;
+        }
 
-        for (int i = startIndex; i < s.length(); i++) {
+        return EncodingMode.ALPHA_NUMERIC;
+    }
+
+    private boolean mustChangeAlphanumericToNumeric(String s, int start) {
+        boolean ret = false;
+        int cnt = 0;
+
+        for (int i = start; i < s.length(); i++) {
             if (!AlphanumericEncoder.inSubset(s.charAt(i))) {
                 break;
             }
@@ -463,28 +475,26 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             if (NumericEncoder.inSubset(s.charAt(i))) {
                 cnt++;
             } else {
-                flg = true;
+                ret = true;
                 break;
             }
         }
 
-        if (flg) {
+        if (ret) {
+            int version = _currSymbol.getVersion();
+
             if (1 <= version && version <= 9) {
-                flg = cnt >= 13;
+                ret = cnt >= 13;
             } else if (10 <= version && version <= 26) {
-                flg = cnt >= 15;
+                ret = cnt >= 15;
             } else if (27 <= version && version <= 40) {
-                flg = cnt >= 17;
+                ret = cnt >= 17;
             } else {
                 throw new InternalError();
             }
-
-            if (flg) {
-                return EncodingMode.NUMERIC;
-            }
         }
 
-        return EncodingMode.ALPHA_NUMERIC;
+        return ret;
     }
 
     /**
@@ -492,20 +502,30 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param s
      *            対象文字列
-     * @param startIndex
+     * @param start
      *            評価を開始する位置
      */
-    private EncodingMode selectModeWhileInByteMode(String s, int startIndex) {
-        int version = _currSymbol.getVersion();
-
-        int cnt = 0;
-        boolean flg = false;
-
-        if (KanjiEncoder.inSubset(s.charAt(startIndex))) {
+    private EncodingMode selectModeWhileInByteMode(String s, int start) {
+        if (KanjiEncoder.inSubset(s.charAt(start))) {
             return EncodingMode.KANJI;
         }
 
-        for (int i = startIndex; i < s.length(); i++) {
+        if (mustChangeByteToNumeric(s, start)) {
+            return EncodingMode.NUMERIC;
+        }
+
+        if (mustChangeByteToAlphanumeric(s, start)) {
+            return EncodingMode.ALPHA_NUMERIC;
+        }
+
+        return EncodingMode.EIGHT_BIT_BYTE;
+    }
+
+    private boolean mustChangeByteToNumeric(String s, int start) {
+        boolean ret = false;
+        int cnt = 0;
+
+        for (int i = start; i < s.length(); i++) {
             if (!ByteEncoder.inSubset(s.charAt(i))) {
                 break;
             }
@@ -513,33 +533,34 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             if (NumericEncoder.inSubset(s.charAt(i))) {
                 cnt++;
             } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
-                flg = true;
+                ret = true;
                 break;
             } else {
                 break;
             }
         }
 
-        if (flg) {
+        if (ret) {
+            int version = _currSymbol.getVersion();
+
             if (1 <= version && version <= 9) {
-                flg = cnt >= 6;
+                ret = cnt >= 6;
             } else if (10 <= version && version <= 26) {
-                flg = cnt >= 8;
+                ret = cnt >= 8;
             } else if (27 <= version && version <= 40) {
-                flg = cnt >= 9;
+                ret = cnt >= 9;
             } else {
                 throw new InternalError();
             }
-
-            if (flg) {
-                return EncodingMode.NUMERIC;
-            }
         }
 
-        cnt = 0;
-        flg = false;
+        return ret;
+    }
+    private boolean mustChangeByteToAlphanumeric(String s, int start) {
+        boolean ret = false;
+        int cnt = 0;
 
-        for (int i = startIndex; i < s.length(); i++) {
+        for (int i = start; i < s.length(); i++) {
             if (!ByteEncoder.inSubset(s.charAt(i))) {
                 break;
             }
@@ -547,30 +568,28 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
             if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
                 cnt++;
             } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
-                flg = true;
+                ret = true;
                 break;
             } else {
                 break;
             }
         }
 
-        if (flg) {
+        if (ret) {
+            int version = _currSymbol.getVersion();
+
             if (1 <= version && version <= 9) {
-                flg = cnt >= 11;
+                ret = cnt >= 11;
             } else if (10 <= version && version <= 26) {
-                flg = cnt >= 15;
+                ret = cnt >= 15;
             } else if (27 <= version && version <= 40) {
-                flg = cnt >= 16;
+                ret = cnt >= 16;
             } else {
                 throw new InternalError();
             }
-
-            if (flg) {
-                return EncodingMode.ALPHA_NUMERIC;
-            }
         }
 
-        return EncodingMode.EIGHT_BIT_BYTE;
+        return ret;
     }
 
     /**

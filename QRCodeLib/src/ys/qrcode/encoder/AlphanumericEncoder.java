@@ -93,58 +93,39 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      * 指定した文字の、英数字モードにおけるコード値を返します。
      */
     private static int convertCharCode(char c) {
+        if (c == ' ') {
+            return 36;
+        }
+        if (c == '$' || c == '%') {
+            return c + 1;
+        }
+        if (c == '*' || c == '+') {
+            return c - 3;
+        }
+        if (c == '-' || c == '.') {
+            return c - 4;
+        }
+        if (c == '/') {
+            return 43;
+        }
+        if ('0' <= c && c <= '9') {
+            return c - 48;
+        }
+        if (c == ':') {
+            return 44;
+        }
         if ('A' <= c && c <= 'Z') {
             return c - 55;
         }
 
-        if ('0' <= c && c <= '9') {
-            return c - 48;
-        }
-
-        if (c == ' ') {
-            return 36;
-        }
-
-        if (c == '$' || c == '%') {
-            return c + 1;
-        }
-
-        if (c == '*' || c == '+') {
-            return c - 3;
-        }
-
-        if (c == '-' || c == '.') {
-            return c - 4;
-        }
-
-        if (c == '/') {
-            return 43;
-        }
-
-        if (c == ':') {
-            return 44;
-        }
-
-        throw new IllegalArgumentException("c");
+        return -1;
     }
 
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
     public static boolean inSubset(char c) {
-        return (
-            'A' <= c && c <= 'Z' ||
-            '0' <= c && c <= '9' ||
-            c == ' '             ||
-            c == '.'             ||
-            c == '-'             ||
-            c == '$'             ||
-            c == '%'             ||
-            c == '*'             ||
-            c == '+'             ||
-            c == '/'             ||
-            c == ':'
-       );
+        return convertCharCode(c) > -1;
     }
 
     /**

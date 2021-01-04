@@ -53,7 +53,7 @@ class MaskingPenaltyScore {
             int cnt = 1;
 
             for (int i = 0; i < row.length - 1; i++) {
-                if ((row[i] > 0) == (row[i + 1] > 0)) {
+                if (Values.isDark(row[i]) == Values.isDark(row[i + 1])) {
                     cnt++;
                 } else {
                     if (cnt >= 5) {
@@ -80,11 +80,11 @@ class MaskingPenaltyScore {
 
         for (int r = 0; r < moduleMatrix.length - 1; r++) {
             for (int c = 0; c < moduleMatrix[r].length - 1; c++) {
-                boolean temp = moduleMatrix[r][c] > 0;
+                boolean temp = Values.isDark(moduleMatrix[r][c]);
 
-                if ((moduleMatrix[r + 0][c + 1] > 0 == temp) &&
-                    (moduleMatrix[r + 1][c + 0] > 0 == temp) &&
-                    (moduleMatrix[r + 1][c + 1] > 0 == temp)) {
+                if ((Values.isDark(moduleMatrix[r + 0][c + 1]) == temp) &&
+                    (Values.isDark(moduleMatrix[r + 1][c + 0]) == temp) &&
+                    (Values.isDark(moduleMatrix[r + 1][c + 1]) == temp)) {
                         penalty += 3;
                 }
             }
@@ -97,6 +97,7 @@ class MaskingPenaltyScore {
      * 行／列における1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
      */
     private static int calcModuleRatio(int[][] moduleMatrix) {
+
         int[][] moduleMatrixTemp = QuietZone.place(moduleMatrix);
 
         int penalty = 0;
@@ -126,21 +127,21 @@ class MaskingPenaltyScore {
                 int i = rng[0] - 1;
 
                 // light ratio 1
-                for (cnt = 0; i >= 0 && row[i] <= 0; cnt++, i--);
+                for (cnt = 0; i >= 0 && !Values.isDark(row[i]); cnt++, i--);
 
                 if (cnt != ratio1) {
                     continue;
                 }
 
                 // dark ratio 1
-                for (cnt = 0; i >= 0 && row[i] > 0; cnt++, i--);
+                for (cnt = 0; i >= 0 && Values.isDark(row[i]); cnt++, i--);
 
                 if (cnt != ratio1) {
                     continue;
                 }
 
                 // light ratio 4
-                for (cnt = 0; i >= 0 && row[i] <= 0; cnt++, i--);
+                for (cnt = 0; i >= 0 && !Values.isDark(row[i]); cnt++, i--);
 
                 if (cnt >= ratio4) {
                     impose = true;
@@ -149,21 +150,21 @@ class MaskingPenaltyScore {
                 i = rng[1] + 1;
 
                 // light ratio 1
-                for (cnt = 0; i <= row.length - 1 && row[i] <= 0; cnt++, i++);
+                for (cnt = 0; i <= row.length - 1 && !Values.isDark(row[i]); cnt++, i++);
 
                 if (cnt != ratio1) {
                     continue;
                 }
 
                 // dark ratio 1
-                for (cnt = 0; i <= row.length - 1 && row[i] > 0; cnt++, i++);
+                for (cnt = 0; i <= row.length - 1 && Values.isDark(row[i]); cnt++, i++);
 
                 if (cnt != ratio1) {
                     continue;
                 }
 
                 // light ratio 4
-                for (cnt = 0; i <= row.length - 1 && row[i] <= 0; cnt++, i++);
+                for (cnt = 0; i <= row.length - 1 && !Values.isDark(row[i]); cnt++, i++);
 
                 if (cnt >= ratio4) {
                     impose = true;
@@ -182,18 +183,17 @@ class MaskingPenaltyScore {
     private static int[][] getRatio3Ranges(int[] arg) {
         List<int[]> ret = new ArrayList<int[]>();
         int s = 0;
-        int e;
 
-        for (int i = QuietZone.WIDTH; i < arg.length - QuietZone.WIDTH; i++) {
-            if (arg[i] > 0 && arg[i - 1] <= 0) {
-                s = i;
-            }
+        for (int i = 1; i < arg.length - 1; i++) {
+            if (Values.isDark(arg[i])) {
+                if (!Values.isDark(arg[i - 1])) {
+                    s = i;
+                }
 
-            if (arg[i] > 0 && arg[i + 1] <= 0) {
-                e = i;
-
-                if ((e + 1 - s) % 3 == 0) {
-                    ret.add(new int[] { s, e });
+                if (!Values.isDark(arg[i + 1])) {
+                    if ((i + 1 - s) % 3 == 0) {
+                        ret.add(new int[] { s, i });
+                    }
                 }
             }
         }
@@ -208,18 +208,20 @@ class MaskingPenaltyScore {
 
         for (int[] row : moduleMatrix) {
             for (int value : row) {
-                if (value > 0) {
+                if (Values.isDark(value)) {
                     darkCount++;
                 }
             }
         }
 
-        int tmp;
-        tmp = (int) Math.ceil((darkCount / Math.pow(moduleMatrix.length, 2) * 100));
-        tmp = Math.abs(tmp - 50);
-        tmp = (tmp + 4) / 5;
+        double numModules = Math.pow(moduleMatrix.length, 2);
+        double k;
+        k = darkCount / numModules * 100;
+        k = Math.abs(k - 50);
+        k = Math.floor(k / 5);
+        int penalty = (int)k * 10;
 
-        return tmp * 10;
+        return penalty;
     }
 
 }

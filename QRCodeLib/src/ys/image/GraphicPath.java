@@ -11,7 +11,7 @@ public class GraphicPath {
     }
 
     public static Point[][] FindContours(int[][] image) {
-        List<Point[]> paths = new ArrayList<Point[]>();
+        List<Point[]> gpPaths = new ArrayList<Point[]>();
 
         for (int y = 0; y < image.length - 1; y++) {
             for (int x = 0; x < image[y].length - 1; x++) {
@@ -25,7 +25,7 @@ public class GraphicPath {
 
                 image[y][x] = Integer.MAX_VALUE;
                 Point start = new Point(x, y);
-                List<Point> path = new ArrayList<Point>(Arrays.asList(start));
+                List<Point> gpPath = new ArrayList<Point>(Arrays.asList(start));
 
                 Direction dr = Direction.UP;
                 Point p = new Point(start.x, start.y - 1);
@@ -39,13 +39,13 @@ public class GraphicPath {
                             if (image[p.y][p.x + 1] <= 0)
                                 p = new Point(p.x, p.y - 1);
                             else {
-                                path.add(p);
+                                gpPath.add(p);
                                 dr = Direction.RIGHT;
                                 p = new Point(p.x + 1, p.y);
                             }
                         } else {
                             p = new Point(p.x, p.y + 1);
-                            path.add(p);
+                            gpPath.add(p);
                             dr = Direction.LEFT;
                             p = new Point(p.x - 1, p.y);
                         }
@@ -58,13 +58,13 @@ public class GraphicPath {
                             if (image[p.y][p.x - 1] <= 0)
                                 p = new Point(p.x, p.y + 1);
                             else {
-                                path.add(p);
+                                gpPath.add(p);
                                 dr = Direction.LEFT;
                                 p = new Point(p.x - 1, p.y);
                             }
                         } else {
                             p = new Point(p.x, p.y - 1);
-                            path.add(p);
+                            gpPath.add(p);
                             dr = Direction.RIGHT;
                             p = new Point(p.x + 1, p.y);
                         }
@@ -77,13 +77,13 @@ public class GraphicPath {
                             if (image[p.y - 1][p.x] <= 0)
                                 p = new Point(p.x - 1, p.y);
                             else {
-                                path.add(p);
+                                gpPath.add(p);
                                 dr = Direction.UP;
                                 p = new Point(p.x, p.y - 1);
                             }
                         } else {
                             p = new Point(p.x + 1, p.y);
-                            path.add(p);
+                            gpPath.add(p);
                             dr = Direction.DOWN;
                             p = new Point(p.x, p.y + 1);
                         }
@@ -96,13 +96,13 @@ public class GraphicPath {
                             if (image[p.y + 1][p.x] <= 0)
                                 p = new Point(p.x + 1, p.y);
                             else {
-                                path.add(p);
+                                gpPath.add(p);
                                 dr = Direction.DOWN;
                                 p = new Point(p.x, p.y + 1);
                             }
                         } else {
                             p = new Point(p.x - 1, p.y);
-                            path.add(p);
+                            gpPath.add(p);
                             dr = Direction.UP;
                             p = new Point(p.x, p.y - 1);
                         }
@@ -114,10 +114,10 @@ public class GraphicPath {
 
                 } while (!(p.equals(start)));
 
-                paths.add(path.toArray(new Point[path.size()]));
+                gpPaths.add(gpPath.toArray(new Point[gpPath.size()]));
             }
         }
 
-        return paths.toArray(new Point[paths.size()][]);
+        return gpPaths.toArray(new Point[gpPaths.size()][]);
     }
 }

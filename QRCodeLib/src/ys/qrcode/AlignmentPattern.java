@@ -1,6 +1,8 @@
 package ys.qrcode;
 
 class AlignmentPattern {
+    private static final int VAL = Values.ALIGNMENT;
+
     // 位置合せパターンの中心座標
     private static final int[][] _centerPosArrays = {
         null,
@@ -64,15 +66,14 @@ class AlignmentPattern {
                 if (i == 0        && j == 0        ||
                     i == 0        && j == maxIndex ||
                     i == maxIndex && j == 0) {
-
                     continue;
                 }
 
-                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r - 2], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r - 1], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2,  2, -2,  2 }, 0, moduleMatrix[r + 0], c - 2, 5);
-                System.arraycopy(new int[] { 2, -2, -2, -2,  2 }, 0, moduleMatrix[r + 1], c - 2, 5);
-                System.arraycopy(new int[] { 2,  2,  2,  2,  2 }, 0, moduleMatrix[r + 2], c - 2, 5);
+                System.arraycopy(new int[] { VAL,  VAL,  VAL,  VAL,  VAL }, 0, moduleMatrix[r - 2], c - 2, 5);
+                System.arraycopy(new int[] { VAL, -VAL, -VAL, -VAL,  VAL }, 0, moduleMatrix[r - 1], c - 2, 5);
+                System.arraycopy(new int[] { VAL, -VAL,  VAL, -VAL,  VAL }, 0, moduleMatrix[r + 0], c - 2, 5);
+                System.arraycopy(new int[] { VAL, -VAL, -VAL, -VAL,  VAL }, 0, moduleMatrix[r + 1], c - 2, 5);
+                System.arraycopy(new int[] { VAL,  VAL,  VAL,  VAL,  VAL }, 0, moduleMatrix[r + 2], c - 2, 5);
             }
         }
     }

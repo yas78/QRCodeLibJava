@@ -4,6 +4,8 @@ package ys.qrcode;
  * 型番情報
  */
 class VersionInfo {
+    private static final int VAL = Values.VERSION;
+
     // 型番情報
     private static int[] _versionInfoValues = {
         -1, -1, -1, -1, -1, -1, -1,
@@ -26,7 +28,7 @@ class VersionInfo {
         int p2 = numModulesPerSide - 11;
 
         for (int i = 0; i < 18; i++) {
-            int v = (versionInfoValue & (1 << i)) > 0 ? 3 : -3;
+            int v = (versionInfoValue & (1 << i)) > 0 ? VAL : -VAL;
 
             moduleMatrix[p1][p2] = v;
             moduleMatrix[p2][p1] = v;
@@ -48,8 +50,8 @@ class VersionInfo {
 
         for (int i = 0; i <= 5; i++) {
             for (int j = numModulesPerSide - 11; j <= numModulesPerSide - 9; j++) {
-                moduleMatrix[i][j] = -3;
-                moduleMatrix[j][i] = -3;
+                moduleMatrix[i][j] = -VAL;
+                moduleMatrix[j][i] = -VAL;
             }
         }
     }

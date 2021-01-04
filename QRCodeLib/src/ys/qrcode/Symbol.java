@@ -30,7 +30,6 @@ import ys.qrcode.misc.BitSequence;
 
 
 public class Symbol {
-
     private final int DEFAULT_MODULE_SIZE = 5;
     private final int MIN_MODULE_SIZE = 2;
 
@@ -382,6 +381,8 @@ public class Symbol {
     }
 
     private void placeSymbolChar(int[][] moduleMatrix) {
+        final int VALUE = Values.WORD;
+
         byte[] data = getEncodingRegionBytes();
 
         int r = moduleMatrix.length - 1;
@@ -390,12 +391,12 @@ public class Symbol {
         boolean toLeft = true;
         int rowDirection = -1;
 
-        for (byte value : data) {
+        for (byte v : data) {
             int bitPos = 7;
 
             while (bitPos >= 0) {
-                if (moduleMatrix[r][c] == 0) {
-                    moduleMatrix[r][c] = (value & (1 << bitPos)) > 0 ? 1 : -1;
+                if (moduleMatrix[r][c] == Values.BLANK) {
+                    moduleMatrix[r][c] = (v & (1 << bitPos)) > 0 ? VALUE : -VALUE;
                     bitPos--;
                 }
 
@@ -466,22 +467,6 @@ public class Symbol {
     }
 
     private byte[] getBitmap1bpp(int moduleSize, String foreRgb, String backRgb) {
-        if (_dataBitCounter == 0) {
-            throw new IllegalStateException();
-        }
-
-        if (moduleSize < MIN_MODULE_SIZE) {
-            throw new IllegalArgumentException("moduleSize");
-        }
-
-        if (ColorCode.isWebColor(foreRgb) == false) {
-            throw new IllegalArgumentException("foreRgb");
-        }
-
-        if (ColorCode.isWebColor(backRgb) == false) {
-            throw new IllegalArgumentException("backRgb");
-        }
-
         Color foreColor = Color.decode(foreRgb);
         Color backColor = Color.decode(backRgb);
 
@@ -506,13 +491,11 @@ public class Symbol {
         byte[] bitmapData = new byte[rowSize * height];
         int offset = 0;
 
-        BitSequence bs = new BitSequence();
-
         for (int r = moduleMatrix.length - 1; r >= 0; r--) {
-            bs.clear();
+            BitSequence bs = new BitSequence();
 
             for (int c = 0; c < moduleMatrix[r].length; c++) {
-                int color = moduleMatrix[r][c] > 0 ? 0 : 1;
+                int color = Values.isDark(moduleMatrix[r][c]) ? 0 : 1;
 
                 for (int i = 1; i <= moduleSize; i++) {
                     bs.append(color, 1);
@@ -560,7 +543,7 @@ public class Symbol {
             int idx = 0;
 
             for (int c = 0; c < moduleMatrix[r].length; c++) {
-                Color color = moduleMatrix[r][c] > 0 ? foreColor : backColor;
+                Color color = Values.isDark(moduleMatrix[r][c]) ? foreColor : backColor;
 
                 for (int i = 1; i <= moduleSize; i++) {
                     bitmapRow[idx++] = (byte) color.getBlue();
@@ -789,9 +772,9 @@ public class Symbol {
             int[] imageRow = new int[width];
             int c = 0;
 
-            for (int value : row) {
+            for (int v : row) {
                 for (int j = 0; j < moduleSize; j++) {
-                    imageRow[c] = value;
+                    imageRow[c] = v > Values.BLANK ? 1 : 0;
                     c++;
                 }
             }
@@ -802,15 +785,15 @@ public class Symbol {
             }
         }
 
-        Point[][] paths = GraphicPath.FindContours(image);
+        Point[][] gpPaths = GraphicPath.FindContours(image);
         StringBuilder buf = new StringBuilder();
         String newLine = System.lineSeparator();
         String indent = new String(new char[11]).replace("\0", " ");
 
-        for (Point[] path : paths) {
+        for (Point[] gpPath : gpPaths) {
             buf.append(indent + "M ");
 
-            for (Point p : path) {
+            for (Point p : gpPath) {
                 buf.append(String.valueOf(p.x) + "," + String.valueOf(p.y) + " ");
             }
 
