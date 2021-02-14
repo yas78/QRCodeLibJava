@@ -9,23 +9,24 @@ import ys.qrcode.format.ModeIndicator;
  * バイトモードエンコーダー
  */
 public class ByteEncoder extends QRCodeEncoder {
-    private final Charset _charset;
-
-    /**
-     * インスタンスを初期化します。
-     */
-    public ByteEncoder() {
-        this(Charset.forName("Shift_JIS"));
-    }
+    private final AlphanumericEncoder _encAlpha;
+    private final KanjiEncoder        _encKanji;
 
     /**
      * インスタンスを初期化します。
      *
      * @param charset
-     *            文字エンコーディング
+     *            文字セット
      */
     public ByteEncoder(Charset charset) {
-        _charset = charset;
+        super(charset);
+        _encAlpha = new AlphanumericEncoder(charset);
+
+        if (charset.name().toLowerCase().equals("shift_jis")) {
+            _encKanji = new KanjiEncoder(charset);
+        } else {
+            _encKanji = null;
+        }
     }
 
     /**
@@ -91,20 +92,22 @@ public class ByteEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean inSubset(char c) {
+    public boolean inSubset(char c) {
         return true;
     }
 
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean inExclusiveSubset(char c) {
-        if (AlphanumericEncoder.inSubset(c)) {
+    public boolean inExclusiveSubset(char c) {
+        if (_encAlpha.inSubset(c)) {
             return false;
         }
 
-        if (KanjiEncoder.inSubset(c)) {
-            return false;
+        if (_encKanji != null) {
+            if (_encKanji.inSubset(c)) {
+                return false;
+            }
         }
 
         return inSubset(c);

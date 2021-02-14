@@ -21,11 +21,15 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     private final ErrorCorrectionLevel _errorCorrectionLevel;
     private final int                  _maxVersion;
     private final boolean              _structuredAppendAllowed;
-    private final Charset              _byteModeCharset;
-    private final Charset              _shiftJISCharset;
+    private final Charset              _charset;
 
     private Symbol _currSymbol;
     private int    _parity;
+
+    private final NumericEncoder      _encNumeric;
+    private final AlphanumericEncoder _encAlpha;
+    private final KanjiEncoder        _encKanji;
+    private final ByteEncoder         _encByte;
 
     /**
      * インスタンスを初期化します。
@@ -49,11 +53,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *
      * @param ecLevel
      *            誤り訂正レベル
-     * @param byteModeCharset
-     *            バイトモードの文字エンコーディング
+     * @param charsetName
+     *            文字セット名
      */
-    public Symbols(ErrorCorrectionLevel ecLevel, String byteModeCharset) {
-        this(ecLevel, Constants.MAX_VERSION, false, byteModeCharset);
+    public Symbols(ErrorCorrectionLevel ecLevel, String charsetName) {
+        this(ecLevel, Constants.MAX_VERSION, false, charsetName);
     }
 
     /**
@@ -95,16 +99,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            型番の上限
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
-     * @param byteModeCharset
-     *            バイトモードの文字エンコーディング
+     * @param charsetName
+     *            文字セット名
      */
-    public Symbols(int maxVersion,
-                   boolean allowStructuredAppend,
-                   String byteModeCharset) {
-        this(ErrorCorrectionLevel.M,
-             maxVersion,
-             allowStructuredAppend,
-             byteModeCharset);
+    public Symbols(int maxVersion, boolean allowStructuredAppend, String charsetName) {
+        this(ErrorCorrectionLevel.M, maxVersion, allowStructuredAppend, charsetName);
     }
 
     /**
@@ -117,20 +116,18 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
      */
-    public Symbols(ErrorCorrectionLevel ecLevel,
-                   int maxVersion,
-                   boolean allowStructuredAppend) {
+    public Symbols(ErrorCorrectionLevel ecLevel, int maxVersion, boolean allowStructuredAppend) {
         this(ecLevel, maxVersion, allowStructuredAppend, "Shift_JIS");
     }
 
     /**
      * インスタンスを初期化します。
      *
-     * @param byteModeCharset
-     *            バイトモードの文字エンコーディング
+     * @param charsetName
+     *            文字セット名
      */
-    public Symbols(String byteModeCharset) {
-        this(ErrorCorrectionLevel.M, Constants.MAX_VERSION, false, byteModeCharset);
+    public Symbols(String charsetName) {
+        this(ErrorCorrectionLevel.M, Constants.MAX_VERSION, false, charsetName);
     }
 
     /**
@@ -142,13 +139,10 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            型番の上限
      * @param allowStructuredAppend
      *            複数シンボルへの分割を許可するには true を指定します。
-     * @param byteModeCharset
-     *            バイトモードの文字エンコーディング
+     * @param charsetName
+     *            文字セット名
      */
-    public Symbols(ErrorCorrectionLevel ecLevel,
-                   int maxVersion,
-                   boolean allowStructuredAppend,
-                   String byteModeCharset) {
+    public Symbols(ErrorCorrectionLevel ecLevel, int maxVersion, boolean allowStructuredAppend, String charsetName) {
         if (!(Constants.MIN_VERSION <= maxVersion && maxVersion <= Constants.MAX_VERSION)) {
             throw new IllegalArgumentException("maxVersion");
         }
@@ -157,16 +151,26 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         _minVersion = 1;
 
-        _errorCorrectionLevel       = ecLevel;
-        _maxVersion                 = maxVersion;
-        _structuredAppendAllowed    = allowStructuredAppend;
-        _byteModeCharset            = Charset.forName(byteModeCharset);
-        _shiftJISCharset            = Charset.forName("shift_jis");
+        _errorCorrectionLevel = ecLevel;
+        _maxVersion = maxVersion;
+        _structuredAppendAllowed = allowStructuredAppend;
+        _charset = Charset.forName(charsetName);
 
         _parity = 0;
         _currSymbol = new Symbol(this);
 
         _items.add(_currSymbol);
+
+        _encNumeric = new NumericEncoder(_charset);
+        _encAlpha = new AlphanumericEncoder(_charset);
+
+        if (_charset.name().toLowerCase().equals("shift_jis")) {
+            _encKanji = new KanjiEncoder(_charset);
+        } else {
+            _encKanji = null;
+        }
+
+        _encByte = new ByteEncoder(_charset);
     }
 
     /**
@@ -207,8 +211,8 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     /**
      * バイトモードの文字エンコーディングを取得します。
      */
-    protected Charset getByteModeCharset() {
-        return _byteModeCharset;
+    protected Charset getCharset() {
+        return _charset;
     }
 
     /**
@@ -308,19 +312,21 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectInitialMode(String s, int start) {
-        if (KanjiEncoder.inSubset(s.charAt(start))) {
-            return EncodingMode.KANJI;
+        if (_encKanji != null) {
+            if (_encKanji.inSubset(s.charAt(start))) {
+                return EncodingMode.KANJI;
+            }
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
+        if (_encByte.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
-        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start))) {
+        if (_encAlpha.inExclusiveSubset(s.charAt(start))) {
             return selectModeWhenInitialDataAlphanumeric(s, start);
         }
 
-        if (NumericEncoder.inSubset(s.charAt(start))) {
+        if (_encNumeric.inSubset(s.charAt(start))) {
             return selectModeWhenInitialDataNumeric(s, start);
         }
 
@@ -331,7 +337,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         int cnt = 0;
 
         for (int i = start; i < s.length(); i++) {
-            if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
+            if (_encAlpha.inExclusiveSubset(s.charAt(i))) {
                 cnt++;
             } else {
                 break;
@@ -353,7 +359,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         if (flg) {
             if ((start + cnt) < s.length()) {
-                if (ByteEncoder.inSubset(s.charAt(start + cnt))) {
+                if (_encByte.inSubset(s.charAt(start + cnt))) {
                     return EncodingMode.EIGHT_BIT_BYTE;
                 }
             }
@@ -366,7 +372,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         int cnt = 0;
 
         for (int i = start; i < s.length(); i++) {
-            if (NumericEncoder.inSubset(s.charAt(i))) {
+            if (_encNumeric.inSubset(s.charAt(i))) {
                 cnt++;
             } else {
                 break;
@@ -388,7 +394,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         if (flg) {
             if ((start + cnt) < s.length()) {
-                if (ByteEncoder.inExclusiveSubset(s.charAt(start + cnt))) {
+                if (_encByte.inExclusiveSubset(s.charAt(start + cnt))) {
                     return EncodingMode.EIGHT_BIT_BYTE;
                 }
             }
@@ -406,7 +412,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         if (flg) {
             if ((start + cnt) < s.length()) {
-                if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start + cnt))) {
+                if (_encAlpha.inExclusiveSubset(s.charAt(start + cnt))) {
                     return EncodingMode.ALPHA_NUMERIC;
                 }
             }
@@ -424,15 +430,17 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectModeWhileInNumericMode(String s, int start) {
-        if (KanjiEncoder.inSubset(s.charAt(start))) {
-            return EncodingMode.KANJI;
+        if (_encKanji != null) {
+            if (_encKanji.inSubset(s.charAt(start))) {
+                return EncodingMode.KANJI;
+            }
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
+        if (_encByte.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
-        if (AlphanumericEncoder.inExclusiveSubset(s.charAt(start))) {
+        if (_encAlpha.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.ALPHA_NUMERIC;
         }
 
@@ -448,11 +456,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectModeWhileInAlphanumericMode(String s, int start) {
-        if (KanjiEncoder.inSubset(s.charAt(start))) {
-            return EncodingMode.KANJI;
+        if (_encKanji != null) {
+            if (_encKanji.inSubset(s.charAt(start))) {
+                return EncodingMode.KANJI;
+            }
         }
 
-        if (ByteEncoder.inExclusiveSubset(s.charAt(start))) {
+        if (_encByte.inExclusiveSubset(s.charAt(start))) {
             return EncodingMode.EIGHT_BIT_BYTE;
         }
 
@@ -468,11 +478,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         int cnt = 0;
 
         for (int i = start; i < s.length(); i++) {
-            if (!AlphanumericEncoder.inSubset(s.charAt(i))) {
+            if (!_encAlpha.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (NumericEncoder.inSubset(s.charAt(i))) {
+            if (_encNumeric.inSubset(s.charAt(i))) {
                 cnt++;
             } else {
                 ret = true;
@@ -506,8 +516,10 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      *            評価を開始する位置
      */
     private EncodingMode selectModeWhileInByteMode(String s, int start) {
-        if (KanjiEncoder.inSubset(s.charAt(start))) {
-            return EncodingMode.KANJI;
+        if (_encKanji != null) {
+            if (_encKanji.inSubset(s.charAt(start))) {
+                return EncodingMode.KANJI;
+            }
         }
 
         if (mustChangeByteToNumeric(s, start)) {
@@ -526,13 +538,13 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
         int cnt = 0;
 
         for (int i = start; i < s.length(); i++) {
-            if (!ByteEncoder.inSubset(s.charAt(i))) {
+            if (!_encByte.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (NumericEncoder.inSubset(s.charAt(i))) {
+            if (_encNumeric.inSubset(s.charAt(i))) {
                 cnt++;
-            } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
+            } else if (_encByte.inExclusiveSubset(s.charAt(i))) {
                 ret = true;
                 break;
             } else {
@@ -556,18 +568,19 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
 
         return ret;
     }
+
     private boolean mustChangeByteToAlphanumeric(String s, int start) {
         boolean ret = false;
         int cnt = 0;
 
         for (int i = start; i < s.length(); i++) {
-            if (!ByteEncoder.inSubset(s.charAt(i))) {
+            if (!_encByte.inSubset(s.charAt(i))) {
                 break;
             }
 
-            if (AlphanumericEncoder.inExclusiveSubset(s.charAt(i))) {
+            if (_encAlpha.inExclusiveSubset(s.charAt(i))) {
                 cnt++;
-            } else if (ByteEncoder.inExclusiveSubset(s.charAt(i))) {
+            } else if (_encByte.inExclusiveSubset(s.charAt(i))) {
                 ret = true;
                 break;
             } else {
@@ -596,16 +609,11 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
      * 構造的連接のパリティを更新します。
      *
      * @param c
-     *      パリティ計算対象の文字
+     *            パリティ計算対象の文字
      */
     void updateParity(char c) {
         byte[] charBytes;
-        if (KanjiEncoder.inSubset(c)) {
-            charBytes = String.valueOf(c).getBytes(_shiftJISCharset);
-        }
-        else {
-            charBytes = String.valueOf(c).getBytes(_byteModeCharset);
-        }
+        charBytes = String.valueOf(c).getBytes(_charset);
 
         for (byte b : charBytes) {
             _parity ^= Byte.toUnsignedInt(b);

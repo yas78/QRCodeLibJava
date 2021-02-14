@@ -275,9 +275,8 @@ public class FormMain extends JFrame {
         // cmbCharset
         this.cmbCharset = new JComboBox<Charset>();
         this.cmbCharset.setFont(new Font("MS UI Gothic", Font.PLAIN, 13));
-        for (Charset charset : Charset.availableCharsets().values()) {
-            this.cmbCharset.addItem(charset);
-        }
+        this.cmbCharset.addItem(Charset.forName("Shift_JIS"));
+        this.cmbCharset.addItem(Charset.forName("UTF-8"));
         this.cmbCharset.setSelectedItem(Charset.forName("Shift_JIS"));
         this.cmbCharset.addActionListener(action());
 

@@ -1,5 +1,7 @@
 package ys.qrcode.encoder;
 
+import java.nio.charset.Charset;
+
 import ys.qrcode.EncodingMode;
 import ys.qrcode.format.ModeIndicator;
 import ys.qrcode.misc.BitSequence;
@@ -8,11 +10,12 @@ import ys.qrcode.misc.BitSequence;
  * 数字モードエンコーダー
  */
 public class NumericEncoder extends QRCodeEncoder {
-
     /**
      * インスタンスを初期化します。
      */
-    public NumericEncoder() { }
+    public NumericEncoder(Charset charset) {
+        super(charset);
+    }
 
     /**
      * 符号化モードを取得します。
@@ -101,14 +104,14 @@ public class NumericEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean inSubset(char c) {
+    public boolean inSubset(char c) {
         return '0' <= c && c <= '9';
     }
 
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean inExclusiveSubset(char c) {
+    public boolean inExclusiveSubset(char c) {
         return inSubset(c);
     }
 }

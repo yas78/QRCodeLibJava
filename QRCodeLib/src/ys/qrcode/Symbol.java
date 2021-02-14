@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -17,6 +18,10 @@ import javax.imageio.ImageIO;
 import ys.image.ColorCode;
 import ys.image.DIB;
 import ys.image.GraphicPath;
+import ys.qrcode.encoder.AlphanumericEncoder;
+import ys.qrcode.encoder.ByteEncoder;
+import ys.qrcode.encoder.KanjiEncoder;
+import ys.qrcode.encoder.NumericEncoder;
 import ys.qrcode.encoder.QRCodeEncoder;
 import ys.qrcode.format.CharCountIndicator;
 import ys.qrcode.format.Codeword;
@@ -103,8 +108,30 @@ public class Symbol {
     }
 
     protected boolean trySetEncodingMode(EncodingMode encMode, char c) {
-        QRCodeEncoder encoder = QRCodeEncoder.createEncoder(
-                encMode, _parent.getByteModeCharset());
+        QRCodeEncoder encoder;
+        Charset charset = _parent.getCharset();
+
+        switch (encMode) {
+        case NUMERIC:
+            encoder = new NumericEncoder(charset);
+            break;
+        case ALPHA_NUMERIC:
+            encoder = new AlphanumericEncoder(charset);
+            break;
+        case EIGHT_BIT_BYTE:
+            encoder = new ByteEncoder(charset);
+            break;
+        case KANJI:
+            if (charset.name().toLowerCase().equals("shift_jis")) {
+                encoder = new KanjiEncoder(charset);
+            } else {
+                throw new IllegalStateException();
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("encMode");
+        }
+
         int bitLength = encoder.getCodewordBitLength(c);
 
         while (_dataBitCapacity <

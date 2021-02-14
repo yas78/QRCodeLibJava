@@ -10,12 +10,15 @@ import ys.qrcode.misc.BitSequence;
  * 漢字モードエンコーダー
  */
 public class KanjiEncoder extends QRCodeEncoder {
-    private static final Charset _charSet = Charset.forName("Shift_JIS");
+    private final AlphanumericEncoder _encAlpha;
 
     /**
      * インスタンスを初期化します。
      */
-    public KanjiEncoder() { }
+    public KanjiEncoder(Charset charset) {
+        super(charset);
+        _encAlpha = new AlphanumericEncoder(charset);
+    }
 
     /**
      * 符号化モードを取得します。
@@ -40,7 +43,7 @@ public class KanjiEncoder extends QRCodeEncoder {
      */
     @Override
     public int append(char c) {
-        byte[] charBytes = String.valueOf(c).getBytes(_charSet);
+        byte[] charBytes = String.valueOf(c).getBytes(_charset);
 
         int wd = (Byte.toUnsignedInt(charBytes[0]) << 8) | Byte.toUnsignedInt(charBytes[1]);
 
@@ -87,8 +90,8 @@ public class KanjiEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static boolean inSubset(char c) {
-        byte[] charBytes = String.valueOf(c).getBytes(_charSet);
+    public boolean inSubset(char c) {
+        byte[] charBytes = String.valueOf(c).getBytes(_charset);
 
         if (charBytes.length != 2) {
             return false;
@@ -109,8 +112,8 @@ public class KanjiEncoder extends QRCodeEncoder {
     /**
      * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
      */
-    public static boolean inExclusiveSubset(char c) {
-        if (AlphanumericEncoder.inSubset(c)) {
+    public boolean inExclusiveSubset(char c) {
+        if (_encAlpha.inSubset(c)) {
             return false;
         }
 

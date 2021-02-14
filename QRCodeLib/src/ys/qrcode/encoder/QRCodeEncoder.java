@@ -15,6 +15,12 @@ public abstract class QRCodeEncoder {
     int _charCounter = 0;
     int _bitCounter  = 0;
 
+    final Charset _charset;
+
+    public QRCodeEncoder(Charset charset) {
+        _charset = charset;
+    }
+
     /**
      * 符号化モードを取得します。
      */
@@ -55,20 +61,12 @@ public abstract class QRCodeEncoder {
     public abstract byte[] getBytes();
 
     /**
-     * 指定した符号化モードのエンコーダーを返します。
+     * 指定した文字が、このモードの文字集合に含まれる場合は true を返します。
      */
-    public static QRCodeEncoder createEncoder(EncodingMode encMode, Charset byteModeCharset) {
-        switch (encMode) {
-        case NUMERIC:
-            return new NumericEncoder();
-        case ALPHA_NUMERIC:
-            return new AlphanumericEncoder();
-        case EIGHT_BIT_BYTE:
-            return new ByteEncoder(byteModeCharset);
-        case KANJI:
-            return new KanjiEncoder();
-        default:
-            throw new IllegalArgumentException("encMode");
-        }
-    }
+    public abstract boolean inSubset(char c);
+
+    /**
+     * 指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
+     */
+    public abstract boolean inExclusiveSubset(char c);
 }
