@@ -209,7 +209,7 @@ public class Symbols implements Iterable<Symbol>, java.util.Iterator<Symbol> {
     }
 
     /**
-     * バイトモードの文字エンコーディングを取得します。
+     * 文字セットを取得します。
      */
     protected Charset getCharset() {
         return _charset;

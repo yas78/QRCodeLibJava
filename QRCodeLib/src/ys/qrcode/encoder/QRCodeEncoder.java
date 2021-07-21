@@ -48,7 +48,7 @@ public abstract class QRCodeEncoder {
     /**
      * 文字を追加します。
      */
-    public abstract int append(char c);
+    public abstract void append(char c);
 
     /**
      * 指定の文字をエンコードしたコード語のビット数を返します。

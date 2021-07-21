@@ -42,7 +42,7 @@ public class KanjiEncoder extends QRCodeEncoder {
      * @return 追加した文字のビット数
      */
     @Override
-    public int append(char c) {
+    public void append(char c) {
         byte[] charBytes = String.valueOf(c).getBytes(_charset);
 
         int wd = (Byte.toUnsignedInt(charBytes[0]) << 8) | Byte.toUnsignedInt(charBytes[1]);
@@ -58,11 +58,8 @@ public class KanjiEncoder extends QRCodeEncoder {
         wd = ((wd >> 8) * 0xC0) + (wd & 0xFF);
         _codeWords.add(wd);
 
-        int ret = getCodewordBitLength(c);
-        _bitCounter += ret;
+        _bitCounter += getCodewordBitLength(c);
         _charCounter++;
-
-        return ret;
     }
 
     /**

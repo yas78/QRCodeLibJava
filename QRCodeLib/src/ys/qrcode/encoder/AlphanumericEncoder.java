@@ -42,7 +42,7 @@ public class AlphanumericEncoder extends QRCodeEncoder {
      * @return 追加した文字のビット数
      */
     @Override
-    public int append(char c) {
+    public void append(char c) {
         int wd = convertCharCode(c);
 
         if (_charCounter % 2 == 0) {
@@ -54,11 +54,8 @@ public class AlphanumericEncoder extends QRCodeEncoder {
             _codeWords.set(_codeWords.size() - 1, temp);
         }
 
-        int ret = getCodewordBitLength(c);
-        _bitCounter += ret;
+        _bitCounter += getCodewordBitLength(c);
         _charCounter++;
-
-        return ret;
     }
 
     /**
@@ -85,7 +82,7 @@ public class AlphanumericEncoder extends QRCodeEncoder {
             bs.append(_codeWords.get(i), bitLength);
         }
 
-        if ((_charCounter % 2) == 0) {
+        if (_charCounter % 2 == 0) {
             bitLength = 11;
         } else {
             bitLength = 6;

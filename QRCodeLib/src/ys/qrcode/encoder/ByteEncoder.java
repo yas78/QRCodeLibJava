@@ -51,18 +51,15 @@ public class ByteEncoder extends QRCodeEncoder {
      * @return 追加した文字のビット数
      */
     @Override
-    public int append(char c) {
+    public void append(char c) {
         byte[] charBytes = String.valueOf(c).getBytes(_charset);
 
         for (byte value : charBytes) {
             _codeWords.add((int) value);
         }
 
-        int ret = 8 * charBytes.length;
-        _bitCounter += ret;
+        _bitCounter += getCodewordBitLength(c);
         _charCounter += charBytes.length;
-
-        return ret;
     }
 
     /**

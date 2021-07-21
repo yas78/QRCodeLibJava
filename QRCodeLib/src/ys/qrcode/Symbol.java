@@ -555,13 +555,7 @@ public class Symbol {
         int width, height;
         width = height  = moduleSize * moduleMatrix.length;
 
-        int rowBytesLen = 3 * width;
-
-        int pack4byte = 0;
-        if (rowBytesLen % 4 > 0)
-            pack4byte = 4 - (rowBytesLen % 4);
-
-        int rowSize = rowBytesLen + pack4byte;
+        int rowSize = ((3 * width + 3) / 4) * 4;
         byte[] bitmapData = new byte[rowSize * height];
         int offset = 0;
 
@@ -752,15 +746,10 @@ public class Symbol {
 
         String newLine = System.lineSeparator();
 
-        String svg = getSvg(moduleSize, foreRgb);
-        String svgFile =
-            "<?xml version='1.0' encoding='UTF-8' standalone='no'?>" + newLine +
-            "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'" + newLine +
-            "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>" + newLine +
-            svg + newLine;
+        String svg = getSvg(moduleSize, foreRgb) + newLine;
 
         try (FileWriter fw = new FileWriter(fileName);) {
-            fw.write(svgFile);
+            fw.write(svg);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -815,7 +804,7 @@ public class Symbol {
         Point[][] gpPaths = GraphicPath.FindContours(image);
         StringBuilder buf = new StringBuilder();
         String newLine = System.lineSeparator();
-        String indent = new String(new char[11]).replace("\0", " ");
+        String indent = new String(new char[5]).replace("\0", " ");
 
         for (Point[] gpPath : gpPaths) {
             buf.append(indent + "M ");
@@ -829,11 +818,10 @@ public class Symbol {
 
         String data = buf.toString().trim();
         String svg =
-            "<svg xmlns=\'http://www.w3.org/2000/svg\'" + newLine +
-            "    width=\'" + width + "\' height=\'" + height + "\' viewBox=\'0 0 " + width + " " + height + "\'>" + newLine +
-            "    <path fill='" + foreRgb + "' stroke='" + foreRgb + "' stroke-width='1'" + newLine +
-            "        d=\'" + data + "\'" + newLine +
-            "    />" + newLine +
+            "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" + newLine +
+            "  width=\"" + width + "px\" height=\"" + height + "px\" viewBox=\"0 0 " + width + " " + height + "\">" + newLine +
+            "<path fill=\"" + foreRgb + "\" stroke=\"" + foreRgb + "\" stroke-width=\"1\"" + newLine +
+            "  d=\"" + data + "\" />" + newLine +
             "</svg>";
 
         return svg;

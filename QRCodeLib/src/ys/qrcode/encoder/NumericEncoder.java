@@ -41,7 +41,7 @@ public class NumericEncoder extends QRCodeEncoder {
      * @return 追加した文字のビット数
      */
     @Override
-    public int append(char c) {
+    public void append(char c) {
         int wd = Integer.parseInt(String.valueOf(c));
 
         if (_charCounter % 3 == 0) {
@@ -53,11 +53,8 @@ public class NumericEncoder extends QRCodeEncoder {
             _codeWords.set(_codeWords.size() - 1, temp);
         }
 
-        int ret = getCodewordBitLength(c);
-        _bitCounter += ret;
+        _bitCounter += getCodewordBitLength(c);
         _charCounter++;
-
-        return ret;
     }
 
     /**
